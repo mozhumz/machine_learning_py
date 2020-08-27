@@ -87,10 +87,23 @@ print(df1.dtypes)
 # print('----------------')
 # print(df1['id'].map(s).fillna(df1['name']).astype(str))
 
-df = pd.DataFrame(np.random.randn(10000, 4))
+# df = pd.DataFrame(np.random.randn(10000, 4))
+#
+# df.iloc[:9998] = np.nan
+#
+# sdf = df.astype(pd.SparseDtype("float", np.nan))
+#
+# sdf.head()
 
-df.iloc[:9998] = np.nan
+f_to_use = ['user_total_orders', 'user_total_items', 'total_distinct_items',
+            'user_average_days_between_orders', 'user_average_basket',
+            'order_hour_of_day', 'days_since_prior_order', 'days_since_ratio',
+            'aisle_id', 'department_id', 'product_orders', 'product_reorders',
+            'product_reorder_rate', 'UP_orders', 'UP_orders_ratio',
+            'UP_average_pos_in_cart', 'UP_orders_since_last',
+            'UP_delta_hour_vs_last']
+# 18
+import tensorflow as tf
+est = tf.estimator.BoostedTreesRegressor(f_to_use,n_batches_per_layer=1)
 
-sdf = df.astype(pd.SparseDtype("float", np.nan))
-
-sdf.head()
+print(len(f_to_use))
