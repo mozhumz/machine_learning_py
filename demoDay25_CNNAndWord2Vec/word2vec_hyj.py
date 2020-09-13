@@ -45,6 +45,23 @@ def train_word2vec_model(input_file_path:str, model_file_path:str):
     print('模型保存结束！')
 
 def train_fasttext_model(input_file_path:str, model_file_path:str):
+    '''
+    fasttext对于不在词表的词可以计算出词向量
+    gensim 中Fasttext 模型架构和Word2Vec的模型架构差几乎一样，
+    只不过在模型词的输入部分使用了词的n-gram的特征。
+    这里需要讲解一下n-gram特征的含义。
+    举个例子，如果原词是一个很长的词：你吃了吗。
+    jieba分词结果为["你","吃了"，"吗"]。
+    unigram(1-gram)的特征：["你","吃了"，"吗"]
+    bigram(2-gram) 的特征: ["你吃了"，"吃了吗"]
+    所以大家发现没，n-gram的意思将词中连续的n个词连起来组成一个单独的词。
+     如果使用unigram和bigram的特征，词的特征就会变成：
+     ["你","吃了"，"吗"，"你吃了"，"吃了吗"]这么一长串。
+     使用n-gram的词向量使得Fast-text模型可以很好的解决未登录词（OOV——out-of-vocabulary）的问题
+    :param input_file_path:
+    :param model_file_path:
+    :return:
+    '''
     logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
     model1 = fasttext.FastText(LineSentence(input_file_path),size=400,window=5)
     model1.save(model_file_path)
