@@ -30,19 +30,20 @@ def train_word2vec_model(input_file_path:str, model_file_path:str):
     :param model_file_path:
     :return:
     '''
+    print('train_word2vec_model start...')
     model = Word2Vec(LineSentence(input_file_path),
                      size=400,  # 词向量长度为400
                      window=5,
-                     min_count=5,
-                     # sg=1,
-                     # iter=20,
+                     sg=1,
+                     iter=50,
                      workers=multiprocessing.cpu_count())
     print('转换过程结束！')
     print('开始保存模型...')
     model.save(model_file_path)
-    print('鲁迅-v:',model['鲁迅'])
-    print('沙瑞金-高育良-sim:',model.wv.similarity('沙瑞金', '高育良'))
-    print('模型保存结束！')
+    print('train_word2vec_model done')
+    # print('鲁迅-v:',model['鲁迅'])
+    # print('沙瑞金-高育良-sim:',model.wv.similarity('沙瑞金', '高育良'))
+    # print('模型保存结束！')
 
 def train_fasttext_model(input_file_path:str, model_file_path:str):
     '''
@@ -62,10 +63,15 @@ def train_fasttext_model(input_file_path:str, model_file_path:str):
     :param model_file_path:
     :return:
     '''
-    logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
-    model1 = fasttext.FastText(LineSentence(input_file_path),size=400,window=5)
+    print('train_fasttext_model start ...')
+    model1 = fasttext.FastText(LineSentence(input_file_path),
+                               size=400,
+                               window=5,
+                               sg=1,
+                               iter=50,
+                               workers=multiprocessing.cpu_count())
     model1.save(model_file_path)
-
+    print('train_fasttext_model done')
 
 def load_model(model_path):
     return Word2Vec.load(model_path)
@@ -101,39 +107,45 @@ def topn(model:Word2Vec,word,n=10):
     return model.wv.similar_by_word(word, topn=n)
 
 if __name__ == "__main__":
-    print('主程序开始执行...')
+    common_util.log('主程序开始执行...')
     seconds=common_util.get_timestamp()
     file_pre='F:\\八斗学院\\视频\\14期正式课\\00-data\\word2vec\\'
     ''' 1 xml转txt'''
-    # xml_path=file_pre+'zhwiki-latest-pages-articles.xml.bz2'
-    # txt_file_path = file_pre+'wiki.cn.txt'
-    # # common_util.wikixml2txt(xml_path,txt_file_path)
-    # # print('1-seconds:',common_util.get_timestamp(-seconds))
-    #
-    # ''' 2 txt繁体转简体'''
-    # simple_file_path = file_pre+'wiki.cn.simple.txt'
-    # common_util.tradition2simple(txt_file_path,simple_file_path)
-    # print('2-seconds:',common_util.get_timestamp(-seconds))
-    # #
-    # # ''' 3 jieba分词'''
-    # jieba_file_path =file_pre+ 'wiki.cn.simple.separate.txt'
-    # common_util.jieba_cut_by_file(simple_file_path,jieba_file_path)
-    # print('3-seconds:',common_util.get_timestamp(-seconds))
-    #
-    # ''' 4 去除非中文词'''
-    wiki_file_path =file_pre+ 'wiki.txt'
-    # common_util.zh_trim_by_file(jieba_file_path,wiki_file_path)
-    # print('4-seconds:',common_util.get_timestamp(-seconds))
-    #
-    # ''' 5 开始训练'''
-    input_file_path =wiki_file_path
-    model_file_path = file_pre+'wiki.model'
+    xml_path=file_pre+'zhwiki-latest-pages-articles.xml.bz2'
+    txt_file_path = file_pre+'wiki.cn.txt'
+    common_util.wikixml2txt(xml_path,txt_file_path)
+    print('1-seconds:',common_util.get_timestamp(-seconds))
 
-    # print('转换过程开始...')
-    # train_word2vec_model(input_file_path,model_file_path)
-    # print('5-seconds:',common_util.get_timestamp(-seconds))
+    ''' 2 txt繁体转简体'''
+    simple_file_path = file_pre+'wiki.cn.simple.txt'
+    common_util.tradition2simple(txt_file_path,simple_file_path)
+    print('2-seconds:',common_util.get_timestamp(-seconds))
+
+    ''' 3 jieba分词'''
+    jieba_file_path =file_pre+ 'wiki.cn.simple.separate.txt'
+    common_util.jieba_cut_by_file(simple_file_path,jieba_file_path)
+    print('3-seconds:',common_util.get_timestamp(-seconds))
+
+    ''' 4 去除非中文词'''
+    wiki_file_path =file_pre+ 'wiki.txt'
+    common_util.zh_trim_by_file(jieba_file_path,wiki_file_path,only_zh=False)
+    print('4-seconds:',common_util.get_timestamp(-seconds))
+    #
+    ''' 5 开始训练'''
+    input_file_path =wiki_file_path
+    model_file_path = file_pre+'out\\wiki.model'
+    model_file_path2 = file_pre+'out\\fast.model'
+
+    common_util.log('word2vec train start...')
+    train_word2vec_model(input_file_path,model_file_path)
+    print('5-seconds:',common_util.get_timestamp(-seconds))
+
+    common_util.log('fast train start...')
+    train_fasttext_model(input_file_path,model_file_path2)
+
+    #6 加载模型
     model=load_model(model_file_path)
-    print(model.accuracy(questions='F:\\八斗学院\视频\\14期正式课\\00-data\\word2vec\\qu.txt'))
-    # print(topn(model,'鲁迅'))
+    # print(model.accuracy(questions='F:\\八斗学院\视频\\14期正式课\\00-data\\word2vec\\qu.txt'))
+    print(topn(model,'鲁迅'))
 
     print('主程序执行结束！')

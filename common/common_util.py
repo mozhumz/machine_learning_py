@@ -6,8 +6,15 @@ from gensim.corpora import WikiCorpus
 import zhconv
 import jieba
 from datetime import datetime
+import logging
 
-
+# 标点符号集合
+punc = punctuation + r'··.,;\\《》？！“”‘’@#￥%…&×（）——+【】{};；●，。&～、|:：'
+# 标点符号集合包括字母
+punc2=punc + r'\sA-Za-z～()（）【】%*#+-\.\\\/:=：__,，。、;；“”""''’‘？?！!<《》>^&{}|=……'
+dicts = {i: '' for i in punc}
+dicts2 = {i: '' for i in punc2}
+logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 
 def get_timestamp(seconds=0.,print_f=True):
     '''
@@ -28,7 +35,7 @@ def print_time(dt=datetime.now()):
     '''
     print('时间：' , dt.strftime( '%Y-%m-%d %H:%M:%S %f' ))
 
-def zh_trim_by_file(input_file_path:str, output_file_path:str):
+def zh_trim_by_file(input_file_path:str, output_file_path:str,only_zh=True):
     '''
     根据文件路径去除非中文词
     :param input_file_path:
@@ -42,7 +49,11 @@ def zh_trim_by_file(input_file_path:str, output_file_path:str):
     print('zh_trim_by_file start...')
     lines = input_file.readlines()
     count = 1
-    cn_reg = '^[\u4e00-\u9fa5]+$'
+    # ^[\u4e00-\u9fa5_a-zA-Z0-9]+$
+    if only_zh:
+        cn_reg = '^[\u4e00-\u9fa5]+$'
+    else:
+        cn_reg='^[\u4e00-\u9fa5a-zA-Z]+$'
     for line in lines:
         line_list = line.split('\n')[0].split(' ')
         line_list_new = []
@@ -137,15 +148,6 @@ def wikixml2txt(input_file_path:str, output_file_path:str):
     print('wikixml2txt:deal done!')
 
 
-
-# 标点符号集合
-punc = punctuation + r'··.,;\\《》？！“”‘’@#￥%…&×（）——+【】{};；●，。&～、|:：'
-# 标点符号集合包括字母
-punc2=punc + r'\sA-Za-z～()（）【】%*#+-\.\\\/:=：__,，。、;；“”""''’‘？?！!<《》>^&{}|=……'
-dicts = {i: '' for i in punc}
-dicts2 = {i: '' for i in punc2}
-
-
 # 根据文件路径（相对或绝对）创建目录
 def mkdirs(file):
     dir = os.path.dirname(os.path.abspath(file))
@@ -197,5 +199,11 @@ def convert_softmax_value(v:[]):
             v[j]=math.exp(v[j])/sum
     return v
 
-if __name__ == '__main__':
-    print_time()
+def log(msg,level=logging.INFO):
+    logging.log(level,msg=msg)
+
+# if __name__ == '__main__':
+#
+#     log(msg='主程序开始执行...')
+#     cn_reg='^[\u4e00-\u9fa5a-zA-Z]+$'
+#     print(re.search(cn_reg,' word'))
