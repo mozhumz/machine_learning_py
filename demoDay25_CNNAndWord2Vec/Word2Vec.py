@@ -7,7 +7,7 @@ import random
 import zipfile
 
 import numpy as np
-import urllib
+import urllib.request as request
 import tensorflow as tf
 
 # Step 1 :下载数据
@@ -16,7 +16,7 @@ url = 'http://mattmahoney.net/dc/'
 
 def maybe_download(filename):
     if not os.path.exists(filename):
-        filename, _ = urllib.request.urlretrieve(url + filename, filename)
+        filename, _ = request.urlretrieve(url + filename, filename)
     return filename
 
 
@@ -40,15 +40,18 @@ vocabulary_size = 50000
 
 
 def build_dataset(words):  # 一对单词
+    # word count
     count = [['UNK', 1]]
     # Counter统计word count，用most_common取前50000个单词为词表
     count.extend(collections.Counter(words).most_common(vocabulary_size - 1))
+    # word:index
     dictionary = dict()
     # words = set()
     # d = dict(zip(words,range(len(words))))
     # 常用的word编码方式
     for word, _ in count:
         dictionary[word] = len(dictionary)
+    # words索引集合
     data = list()
     unk_count = 0  # 不会出现在词表中有多少个词
     # 将所有单词填回到原数据中
@@ -92,10 +95,11 @@ def generate_batch(batch_size, num_skips, skip_window):
     span = 2 * skip_window + 1  # [skip_window target skip_window]
     # 创建一个最大容量为span的deque，即双向队列
     buffer = collections.deque(maxlen=span)
-
+    # 将span个单词放入buffer队列
     for _ in range(span):
         # 只会保留最后插入的span个变量
         buffer.append(data[data_index])
+        # 取余数
         data_index = (data_index + 1) % len(data)
     # 第一层循环，每次循环内对一个目标单词生成样本，buffer中是目标单词和所有相关的词
     for i in range(batch_size // num_skips):  # 多少个目标单词
@@ -190,10 +194,12 @@ with tf.Session(graph=graph,
 
     average_loss = 0
     for step in range(num_steps):
+        # 每次获取一个小批次进行训练
         batch_inputs, batch_labels = generate_batch(batch_size, num_skips, skip_window)
         feed_dict = {train_inputs: batch_inputs, train_labels: batch_labels}
-
+        # 开始训练
         _, loss_val = session.run([optimizer, loss], feed_dict=feed_dict)
+        # 每次训练的平均损失
         average_loss += loss_val
 
         if step % 2000 == 0:
