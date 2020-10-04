@@ -1,3 +1,4 @@
+# -*- coding:utf-8 -*-
 import os
 import re
 from string import punctuation
@@ -8,6 +9,7 @@ import jieba
 from datetime import datetime
 import logging
 
+
 # 标点符号集合
 punc = punctuation + r'··.,;\\《》？！“”‘’@#￥%…&×（）——+【】{};；●，。&～、|:：'
 # 标点符号集合包括字母
@@ -15,7 +17,10 @@ punc2=punc + r'\sA-Za-z～()（）【】%*#+-\.\\\/:=：__,，。、;；“”""
 dicts = {i: '' for i in punc}
 dicts2 = {i: '' for i in punc2}
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
-
+# 中英文字符串匹配
+cn_and_abc_reg='^[\u4e00-\u9fa5a-zA-Z]+$'
+cn_only_reg='^[\u4e00-\u9fa5a-zA-Z]+$'
+contains_cn_or_abc_or_num= '[\u4e00-\u9fa5a-zA-Z0-9]'
 def get_timestamp(seconds=0.,print_f=True):
     '''
     获取当前时间
@@ -51,9 +56,9 @@ def zh_trim_by_file(input_file_path:str, output_file_path:str,only_zh=True):
     count = 1
     # ^[\u4e00-\u9fa5_a-zA-Z0-9]+$
     if only_zh:
-        cn_reg = '^[\u4e00-\u9fa5]+$'
+        cn_reg =cn_only_reg
     else:
-        cn_reg='^[\u4e00-\u9fa5a-zA-Z]+$'
+        cn_reg=cn_and_abc_reg
     for line in lines:
         line_list = line.split('\n')[0].split(' ')
         line_list_new = []
@@ -86,7 +91,7 @@ def jieba_cut_by_file(input_file_path:str, output_file_path:str):
     count = 1
     for line in lines:
         # jieba分词的结果是一个list，需要拼接，但是jieba把空格回车都当成一个字符处理
-        output_file.write(' '.join(jieba.cut(line.split('\n')[0].replace(' ', ''))) + '\n')
+        output_file.write(' '.join(jieba.cut(line.split('\n')[0])) + '\n')
         count += 1
         if count % 10000 == 0:
             print('目前已分词%d条数据' % count)
@@ -199,11 +204,44 @@ def convert_softmax_value(v:[]):
             v[j]=math.exp(v[j])/sum
     return v
 
-def log(msg,level=logging.INFO):
-    logging.log(level,msg=msg)
+def check_str(word:str, reg=contains_cn_or_abc_or_num):
+    '''
+    判断字符串是否包含中文或英文
+    :param word:
+    :return:
+    '''
+    return bool(re.search(reg,word))
 
-# if __name__ == '__main__':
-#
-#     log(msg='主程序开始执行...')
-#     cn_reg='^[\u4e00-\u9fa5a-zA-Z]+$'
-#     print(re.search(cn_reg,' word'))
+
+
+# def log(msg,level=logging.INFO):
+#     logging.log(level,msg=msg)
+
+if __name__ == '__main__':
+    # pre='G:\\bigdata\\badou\\00-data\\'
+    # input_file=pre+'data\\1business.seg.cln.txt'
+    # lines=file_util.read_file(input_file)
+    # read_lines=[]
+    # for line in lines:
+    #     print("line:",line)
+    #     words=line.split(" ")
+    #     tokens=[]
+    #     for word in words:
+    #         if check_str(word)==False:
+    #             print("wordErr:",word)
+    #             continue
+    #         word=trim_with_space_flag(word)
+    #         tokens.append(word)
+    #     print('tokens:',tokens)
+    #     read_lines.append(' '.join(tokens))
+    #
+    # output_file=pre+'word2vec\\test\\1business.seg.cln_out2.txt'
+    # file_util.write_file(read_lines,output_file)
+    # jieba_cut_by_file(input_file,output_file)
+    # s='外部 連結   一般 資訊   網 路上 的 經濟學 期刊   economics   大英 百科 有關 經濟學 的 條目   經濟 學家 資源   美國 經濟 學會 維持 的 資料 庫   機構 和 組織   世界各地 的 經濟 學系 所   部門   和 研究 中心   oecd   statistics   united   nations   statistics   division   聯合國 經濟 數據 資料   world   bank   data   世界 銀行 經濟 資料   學習 資源   social   science   research   network   merlot   learning   materials   economics   美國 的 經濟學 資源 網站   麻省理工   開放式 課程   經濟學 首頁   麻省理工 學院 的 開放式 經濟學 課程   麻省理工   開放式 課程   經濟學 首頁   中文 版本   online   learning   and   teaching   materials   英國 的 經濟 學線 上 學習 資料 庫   the   library   of   economics   and   liberty   econlib   經濟學 和 自由 圖書館   mercatus   center   at   george   mason   university   喬治 梅森 大學 的 市場 研究 中心   參見   经济   经济学家   经济学 学士   經濟 政策   社會 資本   無條件 基本 收入   政治 經濟學   家庭 經濟學'
+    # print(s.split(' '))
+    # log(msg='主程序开始执行...')
+    # cn_reg='^[\u4e00-\u9fa5a-zA-Z]+$'
+    # print(re.search(cn_reg,' word'))
+    # ls=['a']
+    print(bool(re.search(contains_cn_or_abc_or_num, '123')))

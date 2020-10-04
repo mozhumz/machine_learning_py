@@ -7,7 +7,7 @@ from common import common_util
 text = "he is good, Hello, world! 这里，苹果：我;第!一个程序\?()（）<>《》【】 "+"\sA-Za-z～()（）【】%*#+-\.\\\/:=：__,，。、;；“”""''’‘？?！!<《》>^&{}|=……"
 punc2=r"""~`!#$%^&*()_+-=|\'\\;":/.,?><~·！@#￥%……&*（）——+-=“：’；、。，？》《{}!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~“”？，！【】（）、。：；’‘……￥·"""
 text=text+punc2
-print(common_util.trim_with_space_flag(text))
+print(common_util.trim_with_space_flag(text,True))
 # punctuation =punctuation+ r"""~`!#$%^&*()_+-=|\'\\;":/.,?><~·！@#￥%……&*（）——+-=“：’；、。，？》《{}!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~“”？，！【】（）、。：；’‘……￥·"""
 # s =text
 # punc = punctuation + r'··.,;\\《》？！“”‘’@#￥%…&×（）——+【】{};；●，。&～、|\s:：'
