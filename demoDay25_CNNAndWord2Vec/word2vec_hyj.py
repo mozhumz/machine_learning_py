@@ -158,11 +158,11 @@ if __name__ == "__main__":
     # model2_2=load_model(model_file_path2_2)
 
     model2=load_model(model_file_path2)
-    v1=model2['沙瑞金']
+    v1=model2['窦俊']
     print(len(v1),v1)
-    print('----------------------------------')
-    v2=model2.wv['沙瑞金']
-    print(len(v2),v2)
+    # print('----------------------------------')
+    # v2=model2.wv['沙瑞金']
+    # print(len(v2),v2)
     # v1 v2相同
     # [ -1.72133058e-01  -2.89707989e-01   7.29604065e-01  -5.64783990e-01
     #    1.14486955e-01   3.15245867e-01  -5.68415038e-02  -5.32769442e-01
