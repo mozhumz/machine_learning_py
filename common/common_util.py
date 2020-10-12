@@ -154,8 +154,12 @@ def wikixml2txt(input_file_path:str, output_file_path:str):
 
 
 # 根据文件路径（相对或绝对）创建目录
-def mkdirs(file):
-    dir = os.path.dirname(os.path.abspath(file))
+def mkdirs(file,is_file=True):
+    # 获取文件的当前目录
+    if is_file:
+        dir = os.path.dirname(os.path.abspath(file))
+    else:
+        dir=file
     print(dir)
     if not os.path.exists(dir):
         os.makedirs(dir)
@@ -206,7 +210,7 @@ def convert_softmax_value(v:[]):
 
 def check_str(word:str, reg=contains_cn_or_abc_or_num):
     '''
-    判断字符串是否包含中文或英文
+    判断字符串是否包含中文或英文或数字
     :param word:
     :return:
     '''

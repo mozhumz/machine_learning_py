@@ -20,7 +20,7 @@ warnings.filterwarnings(action='ignore', category=UserWarning, module='gensim')
 # for i in data2:
 #     data21+=i+" "
 # documents=[data11,data21]
-corpus0= ["我 来到 北京  清华大学",
+corpus0= ["我 来到 北京  清华大学\n成都\n南京",
           "他 来到 了 网易 杭研 大厦",
           "小明 硕士 毕业 与 中国 科学院",
           "我 爱 北京 天安门"]
@@ -45,6 +45,8 @@ dictionary=corpora.Dictionary(texts)
 # for i in data3:
 #     data31+=i+" "
 #8、将要对比的文档通过doc2bow转化为稀疏向量
+print("我 来到 北京  清华大学\n成都\n南京".split(" "))
+print(dictionary)
 new_xs=dictionary.doc2bow(corpus0[1].split())
 # [0.99999994 0.08247861 0.         0.23904571]
 # [(0, 0.3779644730092272), (1, 0.3779644730092272), (2, 0.3779644730092272), (3, 0.7559289460184544)]
@@ -62,3 +64,6 @@ index=similarities.SparseMatrixSimilarity(tfidf[corpus],num_features=featurenum)
 sim=index[tfidf[new_xs]]
 print(sim)
 print(tfidf[new_xs])
+
+d={'1':1,'2':2}
+print('1' not in d)
