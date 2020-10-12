@@ -146,7 +146,7 @@ print('-----------------')
 # s1 = SnowNLP(s)
 # print(s1.words)
 
-tokenizer = hanlp.load('LARGE_ALBERT_BASE')
+# tokenizer = hanlp.load('LARGE_ALBERT_BASE')
 from common import common_util
 # pre='G:\\bigdata\\badou\\00-data\\word2vec\\test\\1business.seg.cln_out2.txt'
 # lines=file_util.read_file(pre)
