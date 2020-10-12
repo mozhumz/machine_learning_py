@@ -1,10 +1,9 @@
 # -*- coding: UTF-8 -*-
-import tensorflow as tf2
-
-print(tf2.__version__)
-# 使用v1版本
-tf = tf2.compat.v1
-tf.disable_eager_execution()
+import tensorflow as tf
+# print(tf2.__version__)
+# # 使用v1版本
+# tf = tf2.compat.v1
+# tf.disable_eager_execution()
 
 import numpy as np
 from sklearn.preprocessing import StandardScaler

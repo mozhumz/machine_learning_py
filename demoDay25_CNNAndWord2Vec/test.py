@@ -70,3 +70,4 @@ a = [
 
 b=(0,)
 print(b)
+print(a[-1])
