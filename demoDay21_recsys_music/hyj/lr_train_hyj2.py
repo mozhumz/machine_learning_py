@@ -41,7 +41,7 @@ print(labels)
 user_feat=['gender','age','salary','province']
 discrete_feat=user_feat+['location']
 continue_feat=['score']
-
+# get_dummies 是利用pandas实现one hot encode的方式
 df=pd.get_dummies(data[discrete_feat])
 '''
  连续特征score添加到上述df
@@ -53,7 +53,7 @@ print(df.head(20))
 '''
  划分训练集和测试集
 '''
-X_train,X_test,y_train,y_test=train_test_split(df,labels,test_size=0.3,random_state=2020)
+X_train,X_test,y_train,y_test=train_test_split(df.values,labels,test_size=0.3,random_state=2020)
 
 '''
 LR模型训练 fit

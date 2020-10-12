@@ -1,6 +1,17 @@
 import demoDay21_recsys_music.hyj.config_hyj as conf
 import common.common_util as util
 import math
+import jieba
+import pandas as pd
+df = pd.DataFrame([
+    ['green' , 'A'],
+    ['red'   , 'B'],
+    ['blue'  , 'A']])
+
+df.columns = ['color',  'class']
+
+print(pd.get_dummies(df))
+print(df.values)
 # util.mkdirs('G:\\idea_workspace\\bigdata\\bigdata_demo_py\\demoDay21_recsys_music\\data\\music_mid_data_hyj2')
 #
 # res_file=conf.res_file
@@ -20,5 +31,7 @@ p3=1/3
 def getI(p1,p2):
     return -(math.log2(p1)*p1+math.log2(p2)*p2)
 
-print(getI(p1,p2))
-print(getI(p1,p2)-(math.log2(p3)*p3))
+# print(getI(p1,p2))
+# print(getI(p1,p2)-(math.log2(p3)*p3))
+
+# print([x for x in jieba.cut("概率论与数理统计")])
