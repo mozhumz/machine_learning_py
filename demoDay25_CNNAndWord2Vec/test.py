@@ -68,6 +68,14 @@ a = [
 # with tf.Session() as sess:
 #     print(sess.run(tf.argmax(a, axis=0)))
 
-b=(0,)
-print(b)
-print(a[-1])
+# b=(0,)
+# print(b)
+# print(a[-1])
+
+arr=np.array([[1,2,3,4,5],[10,21,31,41,15],[101,211,311,141,115]])
+print(arr[:,3])
+
+import matplotlib.pyplot as plt
+plt.plot([1,2,3,4])
+plt.ylabel('some numbers')
+plt.show()
