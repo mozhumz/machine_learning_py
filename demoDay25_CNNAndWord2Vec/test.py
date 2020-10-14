@@ -75,7 +75,28 @@ a = [
 arr=np.array([[1,2,3,4,5],[10,21,31,41,15],[101,211,311,141,115]])
 print(arr[:,3])
 
-import matplotlib.pyplot as plt
-plt.plot([1,2,3,4])
-plt.ylabel('some numbers')
-plt.show()
+# import matplotlib.pyplot as plt
+# plt.plot([1,2,3,4])
+# plt.ylabel('some numbers')
+# plt.show()
+
+t1=(1,2,3)
+print(t1[1])
+print('------------------')
+x = np.arange(9).reshape(3, 3)
+y = np.ones([3, 3])
+print(x)
+print(y)
+print('------------------')
+c = np.r_[x, y]
+
+d = np.c_[x, y]
+
+# print(d)
+# print(c.round(1))
+a1=np.array([[1.51,2.15],[3.25,4.67]])
+print(a1[1,:])
+# print(a1.round(1))
+# a2=np.reshape([1,2,3],[1,3])
+# a3=np.reshape([1,2,3],[3,1])
+# print(np.matmul(a2,a3)[0][0])
