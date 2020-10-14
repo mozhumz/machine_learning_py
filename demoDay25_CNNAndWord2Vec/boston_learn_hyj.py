@@ -2,7 +2,7 @@ import tensorflow as tf
 import numpy as np
 import matplotlib.pyplot as plt
 
-'''波士顿房价预测'''
+'''波士顿房价预测：一元和多元线性回归'''
 
 def normalize0(train_x):
     return (train_x-train_x.min(axis=0))/(train_x.max(axis=0)-train_x.min(axis=0))
