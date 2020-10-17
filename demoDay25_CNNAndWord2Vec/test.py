@@ -95,8 +95,20 @@ d = np.c_[x, y]
 # print(d)
 # print(c.round(1))
 a1=np.array([[1.51,2.15],[3.25,4.67]])
-print(a1[1,:])
+# print(a1[1,:])
 # print(a1.round(1))
 # a2=np.reshape([1,2,3],[1,3])
 # a3=np.reshape([1,2,3],[3,1])
 # print(np.matmul(a2,a3)[0][0])
+a_list=[1,2,3]
+# a_list+=1
+# print(a_list)
+# a_list+=[2]
+# print(a_list)
+x = tf.constant([[1, 2, 3], [1, 1, 1]])
+y=[0,0,1]
+y_hat=[0.1,0.1,0.8]
+loss=tf.nn.softmax_cross_entropy_with_logits(labels=y,logits=y_hat)
+cross_entropy = tf.reduce_mean(-tf.reduce_sum(y * tf.log(y_hat),reduction_indices=1))
+with tf.Session() as sess:
+    print(sess.run([loss,cross_entropy]))
