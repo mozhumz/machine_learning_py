@@ -2,10 +2,11 @@ import demoDay21_recsys_music.hyj.config_hyj as conf
 import pandas as pd
 import demoDay21_recsys_music.hyj.gen_cf_data_hyj as gen
 import tensorflow as tf
-
+import numpy as np
 data=gen.user_item_socre(nrows=500)
 # 定义label stay_seconds/total_timelen>0.9 -> 1
 data['label']=data['score'].apply(lambda x:1 if x>=0.9 else 0)
+
 
 # 关联用户信息和item信息到data
 user_profile=conf.user_profile()
@@ -71,6 +72,10 @@ pre='F:\\八斗学院\\视频\\14期正式课\\00-data\\nn\\'
 df_file=pre+'music_data.csv'
 df.to_csv(df_file,index=False)
 print('df to csv done')
+chunks = pd.read_csv(df_file,iterator = True)
+chunk = chunks.get_chunk(5)
+print(chunk)
+print(np.array(chunk))
 # 定义超参数
 sample_num=len(df)
 x_col_num=len(df.columns)-1
