@@ -106,8 +106,8 @@ a_list=[1,2,3]
 # a_list+=[2]
 # print(a_list)
 x = tf.constant([[1, 2, 3], [1, 1, 1]])
-y=[0,0,1]
-y_hat=[0.1,0.1,0.8]
+y=np.array([[0,0,1],[0,0,1]])
+y_hat=np.array([[0.1,0.1,0.8],[0.02,0.08,0.9]])
 # loss=tf.nn.softmax_cross_entropy_with_logits(labels=y,logits=y_hat)
 # cross_entropy = tf.reduce_mean(-tf.reduce_sum(y * tf.log(y_hat),reduction_indices=1))
 # with tf.Session() as sess:
@@ -122,7 +122,19 @@ correct_pred=tf.equal(tf.argmax(a,axis=1),tf.argmax(b,axis=1))
 #     out=sess.run(correct_pred)
 #     pred_cast=tf.cast(out, tf.float32)
 #     print(out,sess.run(pred_cast))
-eta=tf.constant(0.1)
-delta_w_2=tf.constant(0.2,shape=[30,10])
+# eta=tf.constant(0.1)
+# delta_w_2=tf.constant(0.2,shape=[30,10])
+def softmax(x):
+    sum_raw = np.sum(np.exp(x), axis=-1)
+    x1 = np.ones(np.shape(x))
+    for i in range(np.shape(x)[0]):
+        x1[i] = np.exp(x[i]) / sum_raw[i]
+    return x1
+
+loss=tf.reduce_sum(tf.nn.softmax_cross_entropy_with_logits(labels=y,logits=y_hat))
+loss2 = (-tf.reduce_sum(y*tf.log(tf.clip_by_value(softmax(y_hat),1e-10,1.0))))
 with tf.Session() as sess:
-    print(sess.run(tf.multiply(eta,delta_w_2)))
+    # print(sess.run(tf.multiply(eta,delta_w_2)))
+    print(sess.run(loss))
+    print(sess.run(loss2))
+

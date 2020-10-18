@@ -19,20 +19,20 @@ b_h=tf.summary.histogram('bias',b)
 
 # 定义交叉熵（cross-entropy）和损失（loss）函数，并添加 name scope 和 summary 以实现更好的可视化
 with tf.name_scope('cross-entropy') as scope:
-    # loss=tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels=y,logits=y_hat))
+    loss=tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels=y,logits=y_hat))
     # loss2 =tf.reduce_mean(-tf.reduce_sum(y * tf.log(y_hat)))
     # 加入clip_by_value 防止y_hat取对数为0
-    loss2 = tf.reduce_mean(-tf.reduce_sum(y*tf.log(tf.clip_by_value(y_hat,1e-10,1.0))))
+    # loss2 = tf.reduce_mean(-tf.reduce_sum(y*tf.log(tf.clip_by_value(y_hat,1e-10,1.0))))
     # 使用 scalar summary 来获得随时间变化的损失函数。scalar summary 在 Events 选项卡下可见
     # tf.summary.scalar('cross-entropy',loss)
-    tf.summary.histogram('cross-entropy',loss2)
+    tf.summary.histogram('cross-entropy',loss)
 
 
 # 采用 TensorFlow GradientDescentOptimizer，学习率为 0.01。为了更好地可视化，定义一个 name_scope
 with tf.name_scope('train') as scope:
     # optimizer=tf.train.GradientDescentOptimizer(learning_rate=0.01).minimize(loss)
     # optimizer=tf.train.AdagradDAOptimizer(learning_rate=0.01,global_step=tf.cast(200,dtype=tf.int64)).minimize(loss)
-    optimizer=tf.train.AdamOptimizer().minimize(loss2)
+    optimizer=tf.train.AdamOptimizer().minimize(loss)
 
 
 
@@ -66,7 +66,7 @@ with tf.Session() as sess:
         for i in range(num_of_batch):
             # 每次训练batch_size的样本量
             batch_xs,batch_ys=mnist.train.next_batch(50)
-            y_hat_out,_,l2,_summary_str=sess.run([y_hat,optimizer,loss2,merge_summary],feed_dict={x:batch_xs,y:batch_ys})
+            y_hat_out,_,l2,_summary_str=sess.run([y_hat,optimizer,loss,merge_summary],feed_dict={x:batch_xs,y:batch_ys})
             writer.add_summary(_summary_str,epoch*num_of_batch+i)
             if  l2 is not None and math.isnan(l2)==False :
                 print('l2 %d'%(l2))
