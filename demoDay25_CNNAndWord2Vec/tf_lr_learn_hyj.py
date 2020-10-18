@@ -3,7 +3,7 @@ import tensorflow as tf
 from matplotlib import pyplot as plt,image as mpimg
 from tensorflow.examples.tutorials.mnist import input_data
 import math
-mnist = input_data.read_data_sets('G:\\bigdata\\badou\\00-data\\MNIST2', one_hot=True)
+mnist = input_data.read_data_sets('F:\\八斗学院\\视频\\14期正式课\\00-data\\MNIST', one_hot=True)
 
 x=tf.placeholder(tf.float32,shape=[None,784],name='X')
 y=tf.placeholder(tf.float32,shape=[None,10],name='Y')
@@ -41,7 +41,19 @@ init=tf.global_variables_initializer()
 # 组合所有的 summary 操作
 merge_summary=tf.summary.merge_all()
 batch_size=50
-correct_pred = tf.equal(tf.argmax(y_hat, 1), tf.argmax(y, 1))  # [0,0,1,1,1]
+
+'''
+argmax: 
+返回tensor中最大分量的索引,axis=1表示按行取最大值 如tensorflow.argmax ( [1,2,3,10,1])  返回 10对应的索引3
+equal:
+逐个元素判断，a, b 是不是相等
+a = [[1,2,3],[4,5,6]]
+b = [[1,0,3],[1,5,1]]
+tf.equal(a,b)
+[[ True False  True]
+ [False  True False]]
+'''
+correct_pred = tf.equal(tf.argmax(y_hat,axis=1), tf.argmax(y, 1))  # [0,0,1,1,1]
 accuracy = tf.reduce_mean(tf.cast(correct_pred, tf.float32))
 with tf.Session() as sess:
     sess.run(init)
@@ -49,15 +61,17 @@ with tf.Session() as sess:
     for epoch in range(200):
         loss_avg=0.
         loss_avg2=0.
+        # 总的批次数
         num_of_batch=int(mnist.train.num_examples/batch_size)
         for i in range(num_of_batch):
+            # 每次训练batch_size的样本量
             batch_xs,batch_ys=mnist.train.next_batch(50)
-            _,l2,_summary_str=sess.run([optimizer,loss2,merge_summary],feed_dict={x:batch_xs,y:batch_ys})
+            y_hat_out,_,l2,_summary_str=sess.run([y_hat,optimizer,loss2,merge_summary],feed_dict={x:batch_xs,y:batch_ys})
             writer.add_summary(_summary_str,epoch*num_of_batch+i)
             if  l2 is not None and math.isnan(l2)==False :
                 print('l2 %d'%(l2))
-                auc_val=sess.run([accuracy],feed_dict={x:batch_xs,y:batch_ys})
-                print('num_of_batch: %s,auc_val: %s'%(i,auc_val))
+                pred_val,auc_val=sess.run([correct_pred,accuracy],feed_dict={x:batch_xs,y:batch_ys})
+                print('num_of_batch: %s,auc_val: %s,pred_val: %s'%(i,auc_val,pred_val))
                 loss_avg2+=l2
                 # loss_avg+=l
                 # for sum in l:
@@ -68,4 +82,5 @@ with tf.Session() as sess:
         loss_avg2/=num_of_batch
         print('epoch %s,loss %s,loss2:%s'%(epoch,loss_avg,loss_avg2))
     print('done')
-    print(sess.run([accuracy],feed_dict={x:mnist.test.images,y:mnist.test.labels}))
+    correct_pred_out,auc_out=sess.run([correct_pred,accuracy],feed_dict={x:mnist.test.images,y:mnist.test.labels})
+    print('pred %s,auc %s'%(correct_pred_out,auc_out))

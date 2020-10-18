@@ -108,7 +108,21 @@ a_list=[1,2,3]
 x = tf.constant([[1, 2, 3], [1, 1, 1]])
 y=[0,0,1]
 y_hat=[0.1,0.1,0.8]
-loss=tf.nn.softmax_cross_entropy_with_logits(labels=y,logits=y_hat)
-cross_entropy = tf.reduce_mean(-tf.reduce_sum(y * tf.log(y_hat),reduction_indices=1))
+# loss=tf.nn.softmax_cross_entropy_with_logits(labels=y,logits=y_hat)
+# cross_entropy = tf.reduce_mean(-tf.reduce_sum(y * tf.log(y_hat),reduction_indices=1))
+# with tf.Session() as sess:
+#     print(sess.run([loss,cross_entropy]))
+
+a = [[1,2,3],[4,5,6]]
+b = [[1,0,3],[1,5,1]]
+correct_pred=tf.equal(tf.argmax(a,axis=1),tf.argmax(b,axis=1))
+
+# with tf.Session() as sess:
+#     print(sess.run(tf.argmax(a,axis=1)))
+#     out=sess.run(correct_pred)
+#     pred_cast=tf.cast(out, tf.float32)
+#     print(out,sess.run(pred_cast))
+eta=tf.constant(0.1)
+delta_w_2=tf.constant(0.2,shape=[30,10])
 with tf.Session() as sess:
-    print(sess.run([loss,cross_entropy]))
+    print(sess.run(tf.multiply(eta,delta_w_2)))
