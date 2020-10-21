@@ -130,11 +130,12 @@ def softmax(x):
     for i in range(np.shape(x)[0]):
         x1[i] = np.exp(x[i]) / sum_raw[i]
     return x1
-
 loss=tf.reduce_sum(tf.nn.softmax_cross_entropy_with_logits(labels=y,logits=y_hat))
 loss2 = (-tf.reduce_sum(y*tf.log(tf.clip_by_value(softmax(y_hat),1e-10,1.0))))
+loss3=tf.reduce_sum(tf.nn.softmax_cross_entropy_with_logits_v2(labels=y,logits=y_hat))
 with tf.Session() as sess:
     # print(sess.run(tf.multiply(eta,delta_w_2)))
     print(sess.run(loss))
-    print(sess.run(loss2))
+    print(sess.run(loss3))
+    # print(sess.run(tf.nn.relu(y_hat)))
 

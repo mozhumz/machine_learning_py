@@ -17,10 +17,18 @@ with tf.name_scope('wx_b') as scope:
 w_h=tf.summary.histogram('weights',W)
 b_h=tf.summary.histogram('bias',b)
 
+import numpy as np
+def softmax(x):
+    sum_raw = np.sum(np.exp(x), axis=-1)
+    x1 = np.ones(np.shape(x))
+    for i in range(np.shape(x)[0]):
+        x1[i] = np.exp(x[i]) / sum_raw[i]
+    return x1
+
 # 定义交叉熵（cross-entropy）和损失（loss）函数，并添加 name scope 和 summary 以实现更好的可视化
 with tf.name_scope('cross-entropy') as scope:
     loss=tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels=y,logits=y_hat))
-    # loss2 =tf.reduce_mean(-tf.reduce_sum(y * tf.log(y_hat)))
+    # loss2 =tf.reduce_mean(-tf.reduce_sum(y * tf.log(softmax(y_hat))))
     # 加入clip_by_value 防止y_hat取对数为0
     # loss2 = tf.reduce_mean(-tf.reduce_sum(y*tf.log(tf.clip_by_value(y_hat,1e-10,1.0))))
     # 使用 scalar summary 来获得随时间变化的损失函数。scalar summary 在 Events 选项卡下可见

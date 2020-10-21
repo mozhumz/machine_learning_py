@@ -108,6 +108,12 @@ def multilayer(x,w,b):
     return res_net,res_net,h1_out,h_1
 # 为正向传播、误差、梯度和更新计算创建计算图
 y_hat,y_net,h_out,h_net=multilayer(x,w,b)
+
+'''
+# softmax_cross_entropy_with_logits 表示先求softmax，再求交叉熵 等价于
+loss2 = (-tf.reduce_sum(y*tf.log(tf.clip_by_value(softmax(y_hat),1e-10,1.0))))
+clip_by_value防止y_hat取对数为0
+'''
 loss=tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels=y,logits=y_hat))
 
 # 梯度优化器
