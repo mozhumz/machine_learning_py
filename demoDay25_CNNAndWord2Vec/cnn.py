@@ -22,6 +22,17 @@ def bias_variable(shape):
 
 # 1步长（stride size），0边距（padding size）的模板，保证输出和输入时同一个大小
 # padding:是否对输入的图像矩阵边缘补0，'SAME'（是）和'VALID'（否）
+'''
+其为长度为4的一阶张量，并且要求strides[0]=strides[3]=1，
+strides[1]，strides[2]决定卷积核在输入图像in_hight，in_width方向的滑动步长，
+而通过图像卷积的过程可以知道，卷积核的大小和图像的大小有时候比不是完全匹配，
+比如图像大小为5x5，卷积核大小为3x3，滑动步长为3时，会涉及到图像卷积过程中边界如何填充的问题，
+padding参数的两个值SAME，VALID决定了其填充方式，通过代码验证其不同的工作方式
+
+当用5x5 的卷积核对28x28的图像进行卷积，采用padding=VALID模式，步长为5，那么最后每个方向会余下3个像素，而VALID模式中会直接舍弃
+padding=same，对于原始图像与卷积核不匹配的情况，就要对图像的边界做一些填充，具体的填充方式和所差的元素个数有关，
+当差偶数个元素是首尾各补一半，差奇数个时前边补奇数个，后边补偶数个
+'''
 def conv2d(x, W):
     return tf.nn.conv2d(x, W, strides=[1, 1, 1, 1], padding='SAME')
 
