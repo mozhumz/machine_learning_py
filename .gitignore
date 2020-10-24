@@ -1,0 +1,8 @@
+.classpath
+.idea
+.project
+target
+*.iml
+events.out.*
+*.ipynb
+.ipynb_checkpoints
