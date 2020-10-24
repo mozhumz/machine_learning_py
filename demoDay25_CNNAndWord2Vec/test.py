@@ -133,14 +133,24 @@ def softmax(x):
 loss=tf.reduce_sum(tf.nn.softmax_cross_entropy_with_logits(labels=y,logits=y_hat))
 loss2 = (-tf.reduce_sum(y*tf.log(tf.clip_by_value(softmax(y_hat),1e-10,1.0))))
 loss3=tf.reduce_sum(tf.nn.softmax_cross_entropy_with_logits_v2(labels=y,logits=y_hat))
-# with tf.Session() as sess:
-#     # print(sess.run(tf.multiply(eta,delta_w_2)))
-#     print(sess.run(loss))
-#     print(sess.run(loss3))
+weights = {
+    'wc1': tf.Variable(tf.random_normal([2, 2, 1, 3])),
+    'wc2': tf.Variable(tf.random_normal([5, 5, 32, 64])),
+    'wd1': tf.Variable(tf.random_normal([7 * 7 * 64, 1024])),
+    'out': tf.Variable(tf.random_normal([1024, 10]))
+}
+init=tf.global_variables_initializer()
+with tf.Session() as sess:
+    sess.run(init)
+    w_val=sess.run(weights)
+    print(w_val['wc1'])
+    # print(sess.run(tf.multiply(eta,delta_w_2)))
+    # print(sess.run(loss))
+    # print(sess.run(loss3))
     # print(sess.run(tf.nn.relu(y_hat)))
 
 arr=np.array([[1,2,3,4],[11,22,33,44],[22,33,55,66]])
-print(arr[:1])
+# print(arr[:1])
 
 # print(arr.argmax(axis=1))
 # print(arr.argmax(axis=0))
@@ -157,6 +167,6 @@ arr2=np.array([
      ]
 ])
 
-print(arr2.argmax())
-print(arr2.argmax(axis=0))
-print(arr2.argmax(axis=1))
+# print(arr2.argmax())
+# print(arr2.argmax(axis=0))
+# print(arr2.argmax(axis=1))

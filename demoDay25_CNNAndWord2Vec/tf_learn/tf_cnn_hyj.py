@@ -7,8 +7,11 @@ import tensorflow as tf
 import numpy as np
 import matplotlib.pyplot as plt
 from tensorflow.examples.tutorials.mnist import input_data
-
-mnist = input_data.read_data_sets('G:\\bigdata\\badou\\00-data\\MNIST2', one_hot=True)
+# import os
+# os.environ["CUDA_VISIBLE_DEVICES"] = ""
+pre='F:\\八斗学院\\视频\\14期正式课\\00-data\\MNIST'
+# pre='G:\\bigdata\\badou\\00-data\\MNIST2'
+mnist = input_data.read_data_sets(pre, one_hot=True)
 
 
 def train_size(num):
@@ -47,7 +50,7 @@ x_train, y_train = train_size(1000)
 # 图片展示label
 display_digit(np.random.randint(0, x_train.shape[0]), x_train, y_train)
 # 图片展示0-400张图片的像素
-display_mult_flat(0, 400, x_train)
+# display_mult_flat(0, 400, x_train)
 # 定义参数
 eta = 0.001
 max_ite = 500
