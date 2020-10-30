@@ -174,7 +174,8 @@ def feat_deal(selected_orders, labels_given=False):
         product_list += user_products
         # 每个product对应当前的order_id,即pair(product_id,order_id)
         order_list += [order_id] * len(user_products)
-        # 指定label 如果用户商品在train中那么为1
+        # 指定label 如果用户商品在train中那么为1，train为近期购买数据，user_products为用户所有的历史购买数据，
+        # 一般认为用户是否购买商品和用户近期购买数据相关性较高
         if labels_given:
             labels += [(order_id, pid) in orders_train.index for pid in user_products]
 

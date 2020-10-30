@@ -1,12 +1,12 @@
 import math
-
-data_path = '../data/allfiles.txt'
-mode_path = '../data/mid_data/hmm.mod'
+pre='G:\\bigdata\\badou\\00-data\\'
+data_path = pre+'allfiles.txt'
+mode_path = pre+'out\\hmm.mod'
 # 一、初始化模型参数（π初始状态，a转移矩阵，b发射矩阵）
-# 其中状态为：B,M,E,S（每个中文字都会对应其中的一个状态）
+# 其中状态为：B,M,E,S [0,1,2,3]（每个中文字都会对应其中的一个状态）
 STATUS_MUN = 4  # M=4
 
-# 1. 初始状态概率 π    [0.0, 0.0, 0.0, 0.0]
+# 1. 初始状态概率[0,1,2,3] π    [0.0, 0.0, 0.0, 0.0]
 pi = [0.0 for pi in range(STATUS_MUN)]   # count
 pi_sum = 0.0
 # print(pi)
@@ -65,6 +65,8 @@ while True:
             # 中间的全部为M：1
             for i in range(1,cur_ch_num-1):
                 cur_stauts_lst[i] = 1
+
+        # extend表示将cur_ch_lst中的元素全部添加到ch_lst
         ch_lst.extend(cur_ch_lst)
         status_lst.extend(cur_stauts_lst)
     # ch_lst,status_lst 每篇文章的字和状态
@@ -74,14 +76,16 @@ while True:
         cur_status = status_lst[i]  # 获取当前文字的状态
         cur_ch = ch_lst[i]
         # 统计初始概率π
-        if i == 0:
+        if i == 0: # 每篇文章的第一个字
             # 为什么不用BMES用0123，就是方便状态直接可以作为索引形式
             pi[cur_status] += 1.0     # 状态分子部分相加
             pi_sum += 1.0  # 不管是哪个状态，分母都+1，sum，为了求概率
         # 统计发射概率B
         if B[cur_status].get(cur_ch, -1) == -1:
             B[cur_status][cur_ch] = 0.0
+        # 统计每种状态下某个字的频次
         B[cur_status][cur_ch] += 1.0
+        # 统计每种状态的频次
         B_sum[cur_status] += 1.0
 
         # 状态转移概率 A
@@ -113,6 +117,7 @@ f_mod.write(str(A)+'\n')
 f_mod.write(str(B)+'\n')
 
 f_mod.close()
+
 
 
 

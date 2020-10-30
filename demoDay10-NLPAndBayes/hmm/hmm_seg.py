@@ -1,4 +1,6 @@
-mode_path = '../data/mid_data/hmm.mod'
+import jieba
+pre='G:\\bigdata\\badou\\00-data\\'
+mode_path =pre+ 'out\\hmm.mod'
 filter_val = 0.02
 # 1.加载模型
 with open(mode_path,'r',encoding='utf-8') as f:
@@ -39,9 +41,11 @@ def viterbi(sentence,sep=' '):
             cur_B = B[i][ch_lst[0]]
         else:
             cur_B = -100000.0
+
         #初始状态概率
+        # pi_k=p(s1)
         cur_pi = pi[i]
-        status_matrix[i][0][0] = cur_pi + cur_B  # 取了log相乘就是相加
+        status_matrix[i][0][0] = cur_pi + cur_B  # 取了log相加就是相乘
         status_matrix[i][0][1] = i
 
     # M*M*(T-1)
@@ -49,7 +53,7 @@ def viterbi(sentence,sep=' '):
         for j in range(STATUS_NUM):  # M
             max_p = None
             max_status = None
-            # 经过j节点的前M个节点中存储概率最大值，及上一层过来到这个节点的编号
+            # 经过j节点的前M个节点中存储概率最大值，及上一层过来到这个节点的状态编号
             for k in range(STATUS_NUM): # M 前一层的第k个s
                 # k到j的转移概率
                 cur_A = A[k][j]
@@ -98,7 +102,12 @@ def viterbi(sentence,sep=' '):
         rest = ''
         rest +=ch_lst[0]
         for i in range(1,ch_num):
+            '''
+            0 1 2 3
+            B M E S
+            '''
             # i-1 是E,S 或者 i是B,S
+            # {2,3}表示set集合
             if best_status_lst[i-1] in {2,3} or best_status_lst[i] in {0,3}:
                 rest += sep
             rest += ch_lst[i]
@@ -107,6 +116,7 @@ def viterbi(sentence,sep=' '):
     i = 0
     res = []
     max_end_p = sorted_last_lst[0][0]
+    # 次优路径和最优路径概率相差在某个阈值filter_val以内，则认为次优路径方案也不错，可作为切分方案
     while (max_end_p - sorted_last_lst[i][0]) < filter_val:
         # 调用获取最优切分方法
         max_end_status = sorted_last_lst[i][2]
@@ -118,5 +128,7 @@ def viterbi(sentence,sep=' '):
 if __name__ == '__main__':
     s = '得到概率最大的状态组合方式'
     s1 = '结巴分词里会结合词性，状态会更多'
-    s2='k到j的转移概率'
-    print(viterbi(s,' '))
+    s2='无边落木萧萧下'
+    print(viterbi(s2,' '))
+    jieba_str=[' '.join([w for w in jieba.cut(s2)])]
+    print(jieba_str)
