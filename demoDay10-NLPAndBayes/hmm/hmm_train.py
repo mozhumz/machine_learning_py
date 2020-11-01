@@ -1,7 +1,8 @@
 import math
-pre='G:\\bigdata\\badou\\00-data\\'
+# pre='G:\\bigdata\\badou\\00-data\\'
+pre = 'F:\\八斗学院\\视频\\14期正式课\\00-data\\'
 data_path = pre+'allfiles.txt'
-mode_path = pre+'out\\hmm.mod'
+mode_path = pre+'out\\hmm\\hmm.mod'
 # 一、初始化模型参数（π初始状态，a转移矩阵，b发射矩阵）
 # 其中状态为：B,M,E,S [0,1,2,3]（每个中文字都会对应其中的一个状态）
 STATUS_MUN = 4  # M=4
@@ -92,10 +93,13 @@ while True:
         if i+1 < len(ch_lst):
             A[cur_status][status_lst[i+1]] += 1.0
             A_sum[cur_status] += 1.0
-
+    print('a_matrix-0',A)
 f_txt.close()
 
 # 将统计结果转化成概率形式
+print('count pi:',pi)
+print('count A:',A)
+print('count B:',B)
 for i in range(STATUS_MUN):
     # pi
     # pi[i] = pi[i]/pi_sum
@@ -109,6 +113,10 @@ for i in range(STATUS_MUN):
     # B
     for ch in B[i]:
         B[i][ch] = math.log(B[i][ch]/B_sum[i])
+
+print('prob pi:',pi)
+print('prob A:',A)
+print('prob B:',B)
 
 # 存储模型->模型文件
 f_mod = open(mode_path,'w',encoding='utf-8')

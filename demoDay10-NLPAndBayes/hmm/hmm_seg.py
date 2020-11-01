@@ -1,8 +1,11 @@
 import jieba
 
-pre = 'G:\\bigdata\\badou\\00-data\\'
-mode_path = pre + 'out\\hmm.mod'
+# pre = 'G:\\bigdata\\badou\\00-data\\'
+pre = 'F:\\八斗学院\\视频\\14期正式课\\00-data\\'
+mode_path = pre + 'out\\hmm\\hyj_hmm.model'
 filter_val = 0.02
+# 频次为0的默认无穷小概率
+min_prob = -100000.0
 # 1.加载模型
 with open(mode_path, 'r', encoding='utf-8') as f:
     # 初始状态概率
@@ -41,7 +44,7 @@ def viterbi(sentence, sep=' '):
         if B[i].get(ch_lst[0], -1) != -1:
             cur_B = B[i][ch_lst[0]]
         else:
-            cur_B = -100000.0
+            cur_B =min_prob
 
         # 初始状态概率
         # pi_k=p(s1)
@@ -67,10 +70,11 @@ def viterbi(sentence, sep=' '):
             if B[j].get(ch_lst[i], -1) != -1:
                 cur_B = B[j][ch_lst[i]]
             else:
-                cur_B = -100000.0
+                cur_B = min_prob
             status_matrix[j][i][0] = max_p + cur_B
             status_matrix[j][i][1] = max_status
 
+    print('s_matrix:',status_matrix)
     # get max prob path
     last_prob_lst = []
 
