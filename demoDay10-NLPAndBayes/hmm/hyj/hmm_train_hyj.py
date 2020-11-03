@@ -233,16 +233,149 @@ def viterbi(sentence, sep=' '):
     sentence_len = len(ch_list)
     # M*句子长度的矩阵，每个元素是一个数组[hmm概率值，上一列中最好的节点状态S]
     s_matrix = [[[0., 0] for j in range(sentence_len)] for i in range(STATUS_NUM)]
+
+    # 找到h层的节点i，使得i到h+1层的j节点的hmm值最大
+    get_max_hmm_matrix2(PI, A, B, ch_list, s_matrix, sentence_len)
+
+    print('s_matrix:', s_matrix)
+
+    '''找到hmm概率最大的S序列'''
+    # 最后一列中，hmm最大的节点
+    best_end = None
+    # 最后一列中，hmm的最大概率
+    best_p = None
+    best_end_status = None
+    # 最后一列的节点列表
+    last_node = []
+    for i in range(STATUS_NUM):
+        end_i = s_matrix[i][-1]
+        last_node.append((end_i[0], end_i[1], i))
+        if best_p is None or best_p < end_i[0]:
+            best_p = end_i[0]
+            best_end_status = i
+            # best_end=end_i
+    # 最后一列的节点列表以hmm概率倒序排列
+    last_node = sorted(last_node, key=lambda x: x[0], reverse=True)
+    print(last_node)
+
+    # 从后往前遍历hmm概率矩阵，找出S序列
+    s_list = [0 for i in range(sentence_len)]
+    s_list[-1] = best_end_status
+    for col_i in range(1, sentence_len + 1):
+        s_list[sentence_len - col_i] = best_end_status
+        i_node = s_matrix[best_end_status][sentence_len - col_i]
+        best_end_status = i_node[1]
+        # best_end=i_node
+
+    print(s_list)
+    # 切分句子 BMES 0123
+    word = ''
+    for ch_i in range(sentence_len):
+        if s_list[ch_i] == 3:
+            word = ch_list[ch_i]
+            res.append(word)
+            word = ''
+            continue
+
+        if s_list[ch_i] == 2:
+            word += ch_list[ch_i]
+            res.append(word)
+            word = ''
+            continue
+
+        word += ch_list[ch_i]
+
+    return res
+
+
+def get_max_hmm_matrix2(PI, A, B, ch_list, s_matrix, sentence_len):
+    '''
+    最优路径动态规划
+    找到最优路径 使得hmm概率最大
+    分析：
+    定义在m*n的S矩阵中，i=m-1, j=n-1 , p,p0 in (0,i), q in (0,j)
+    dp[p][q][0],dp[p][q][1]分别表示从（p0,0）位置(第一列某个节点)到达pq位置（q列某个节点p）的最大hmm概率值和q-1列中hmm最大的节点
+    则dp[p][q][0]= q-1列中的（hmm+ s到节点p的转移概率）最大值的节点s  + p节点到文字Oq的发射概率
+    dp[p][q][0] = max(dp[s][q-1]+ A[s][p])  + B[p][Oq]
+    dp[p][q][1]=s
+    第一列初始值 dp[p][0]= PI[p]+ B[p][O(0)]
+    :param A:
+    :param B:
+    :param ch_list:
+    :param s_matrix:
+    :param sentence_len:
+    :return:
+    '''
+    for p in range(STATUS_NUM):
+        dp(PI, A, B, ch_list, s_matrix, sentence_len, p, sentence_len - 1)
+
+    return s_matrix
+
+
+def dp(PI, A, B, ch_list, s_matrix, sentence_len, p, q):
+    if q == 0:
+        return init_s_matrix(B, PI, ch_list, s_matrix)
+
+    max_arr = max_dps(PI, A, B, ch_list, s_matrix, sentence_len, p, q)
+
+    if B[p].get(ch_list[q], -1) != -1:
+        s_matrix[p][q][0] = max_arr[0] + B[p][ch_list[q]]
+    else:
+        s_matrix[p][q][0] = max_arr[0] + min_prob
+    s_matrix[p][q][1] = max_arr[1]
+
+    return [s_matrix[p][q][0], max_arr[1]]
+
+
+def max_dps(PI, A, B, ch_list, s_matrix, sentence_len, p, q):
+    max_prob = None
+    max_status = None
+    for s in range(STATUS_NUM):
+        cur_prob = dp(PI, A, B, ch_list, s_matrix, sentence_len, s, q - 1)[0] + A[s][p]
+        if max_prob is None or max_prob < cur_prob:
+            max_prob = cur_prob
+            max_status = s
+
+    return [max_prob, max_status]
+
+
+def init_s_matrix(B, PI, ch_list, s_matrix):
+    # 初始化第一列
+    max_prob = None
+    max_status = None
+    for i in range(STATUS_NUM):
+        if B[i].get(ch_list[0], -1) != -1:
+            s_matrix[i][0][0] = PI[i] + B[i][ch_list[0]]
+        else:
+            s_matrix[i][0][0] = PI[i] + min_prob
+        # 第一列不需要存储上一列的最优节点 所以赋值为-1
+        s_matrix[i][0][1] = -1
+        cur_prob = s_matrix[i][0][0] + B[i][ch_list[0]]
+        if max_prob is None or max_prob < cur_prob:
+            max_prob = cur_prob
+            max_status = i
+    return [max_prob, max_status]
+
+
+def get_max_hmm_matrix(PI, A, B, ch_list, s_matrix, sentence_len):
+    '''
+    找到最优路径 使得hmm概率最大
+    :param A:
+    :param B:
+    :param ch_list:
+    :param s_matrix:
+    :param sentence_len:
+    :return:
+    '''
     # 计算第一列的hmm概率=PI(S1)*B(O1|S1)
     for i in range(STATUS_NUM):
-        if B[i].get(ch_list[0],-1)==-1:
-            s_matrix[i][0][0]= PI[i]+min_prob
+        if B[i].get(ch_list[0], -1) == -1:
+            s_matrix[i][0][0] = PI[i] + min_prob
         else:
             # 由于概率取了对数，相加即相乘
             s_matrix[i][0][0] = PI[i] + B[i][ch_list[0]]
-        s_matrix[i][0][1]=i
+        s_matrix[i][0][1] = i
 
-    # 找到h层的节点i，使得i到h+1层的j节点的hmm值最大
     for ch_j in range(1, sentence_len):
         # 某一行某个文字可能有M种状态
         # 当前列的j
@@ -254,74 +387,24 @@ def viterbi(sentence, sep=' '):
                 # i到j的转移概率
                 a_ij = A[i][j]
                 # 当前i到j的hmm概率
-                cur_p = s_matrix[i][ch_j-1][0] + a_ij
+                cur_p = s_matrix[i][ch_j - 1][0] + a_ij
                 if max_p is None or max_p < cur_p:
                     max_p = cur_p
                     max_status = i
 
             # j节点的hmm概率和i节点的状态S
-            b_prob=min_prob
-            if B[j].get(ch_list[ch_j],-1)!=-1:
-                b_prob=B[j][ch_list[ch_j]]
+            b_prob = min_prob
+            if B[j].get(ch_list[ch_j], -1) != -1:
+                b_prob = B[j][ch_list[ch_j]]
 
-            s_matrix[j][ch_j][0] = max_p +b_prob
+            s_matrix[j][ch_j][0] = max_p + b_prob
             s_matrix[j][ch_j][1] = max_status
-
-    print('s_matrix:',s_matrix)
-    # 找到hmm概率最大的S序列
-    # 最后一列中，hmm最大的节点
-    best_end=None
-    # 最后一列中，hmm的最大概率
-    best_p=None
-    best_end_status=None
-    last_node=[]
-    for i in range(STATUS_NUM):
-        end_i=s_matrix[i][-1]
-        last_node.append((end_i[0],end_i[1],i))
-        if best_p is None or best_p<end_i[0]:
-            best_p=end_i[0]
-            best_end_status=i
-            # best_end=end_i
-
-    last_node=sorted(last_node,key=lambda x:x[0],reverse=True)
-    print(last_node)
-    # 从后往前遍历hmm概率矩阵，找出S序列
-    s_list=[0 for i in range(sentence_len)]
-    s_list[-1]=best_end_status
-
-
-    for col_i in range(1,sentence_len+1):
-        s_list[sentence_len-col_i]=best_end_status
-        i_node=s_matrix[best_end_status][sentence_len-col_i]
-        best_end_status=i_node[1]
-        # best_end=i_node
-
-    print(s_list)
-    # 切分句子 BMES 0123
-    word=''
-    for ch_i in range(sentence_len):
-        if s_list[ch_i]==3:
-            word=ch_list[ch_i]
-            res.append(word)
-            word=''
-            continue
-
-        if s_list[ch_i]==2:
-            word+=ch_list[ch_i]
-            res.append(word)
-            word=''
-            continue
-
-        word+=ch_list[ch_i]
-
-    return res
-
 
 
 if __name__ == '__main__':
     # train_theta()
-    st = '无边落木萧萧下'
-    res=viterbi(st)
+    st = '无边落木萧萧下不尽长江滚滚来'
+    res = viterbi(st)
     print(res)
     # ch_list = get_word_ch_list(st)
     # slist = get_status_list_by_chlist(ch_list)
