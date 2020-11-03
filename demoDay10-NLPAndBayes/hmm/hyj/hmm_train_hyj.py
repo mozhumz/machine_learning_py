@@ -235,7 +235,7 @@ def viterbi(sentence, sep=' '):
     s_matrix = [[[0., 0] for j in range(sentence_len)] for i in range(STATUS_NUM)]
 
     # 找到h层的节点i，使得i到h+1层的j节点的hmm值最大
-    get_max_hmm_matrix2(PI, A, B, ch_list, s_matrix, sentence_len)
+    get_max_hmm_matrix(PI, A, B, ch_list, s_matrix, sentence_len)
 
     print('s_matrix:', s_matrix)
 
@@ -306,55 +306,55 @@ def get_max_hmm_matrix2(PI, A, B, ch_list, s_matrix, sentence_len):
     :param sentence_len:
     :return:
     '''
-    for p in range(STATUS_NUM):
-        dp(PI, A, B, ch_list, s_matrix, sentence_len, p, sentence_len - 1)
-
+    # for p in range(STATUS_NUM):
+    #     dp(PI, A, B, ch_list, s_matrix, sentence_len, p, sentence_len - 1)
+    # 递归废弃 直接返回s_matrix
     return s_matrix
 
 
-def dp(PI, A, B, ch_list, s_matrix, sentence_len, p, q):
-    if q == 0:
-        return init_s_matrix(B, PI, ch_list, s_matrix)
-
-    max_arr = max_dps(PI, A, B, ch_list, s_matrix, sentence_len, p, q)
-
-    if B[p].get(ch_list[q], -1) != -1:
-        s_matrix[p][q][0] = max_arr[0] + B[p][ch_list[q]]
-    else:
-        s_matrix[p][q][0] = max_arr[0] + min_prob
-    s_matrix[p][q][1] = max_arr[1]
-
-    return [s_matrix[p][q][0], max_arr[1]]
-
-
-def max_dps(PI, A, B, ch_list, s_matrix, sentence_len, p, q):
-    max_prob = None
-    max_status = None
-    for s in range(STATUS_NUM):
-        cur_prob = dp(PI, A, B, ch_list, s_matrix, sentence_len, s, q - 1)[0] + A[s][p]
-        if max_prob is None or max_prob < cur_prob:
-            max_prob = cur_prob
-            max_status = s
-
-    return [max_prob, max_status]
-
-
-def init_s_matrix(B, PI, ch_list, s_matrix):
-    # 初始化第一列
-    max_prob = None
-    max_status = None
-    for i in range(STATUS_NUM):
-        if B[i].get(ch_list[0], -1) != -1:
-            s_matrix[i][0][0] = PI[i] + B[i][ch_list[0]]
-        else:
-            s_matrix[i][0][0] = PI[i] + min_prob
-        # 第一列不需要存储上一列的最优节点 所以赋值为-1
-        s_matrix[i][0][1] = -1
-        cur_prob = s_matrix[i][0][0] + B[i][ch_list[0]]
-        if max_prob is None or max_prob < cur_prob:
-            max_prob = cur_prob
-            max_status = i
-    return [max_prob, max_status]
+# def dp(PI, A, B, ch_list, s_matrix, sentence_len, p, q):
+#     if q == 0:
+#         return init_s_matrix(B, PI, ch_list, s_matrix)
+#
+#     max_arr = max_dps(PI, A, B, ch_list, s_matrix, sentence_len, p, q)
+#
+#     if B[p].get(ch_list[q], -1) != -1:
+#         s_matrix[p][q][0] = max_arr[0] + B[p][ch_list[q]]
+#     else:
+#         s_matrix[p][q][0] = max_arr[0] + min_prob
+#     s_matrix[p][q][1] = max_arr[1]
+#
+#     return [s_matrix[p][q][0], s_matrix[p][q][1]]
+#
+#
+# def max_dps(PI, A, B, ch_list, s_matrix, sentence_len, p, q):
+#     max_prob = None
+#     max_status = None
+#     for s in range(STATUS_NUM):
+#         cur_prob = dp(PI, A, B, ch_list, s_matrix, sentence_len, s, q - 1)[0] + A[s][p]
+#         if max_prob is None or max_prob < cur_prob:
+#             max_prob = cur_prob
+#             max_status = s
+#
+#     return [max_prob, max_status]
+#
+#
+# def init_s_matrix(B, PI, ch_list, s_matrix):
+#     # 初始化第一列
+#     max_prob = None
+#     max_status = None
+#     for i in range(STATUS_NUM):
+#         if B[i].get(ch_list[0], -1) != -1:
+#             s_matrix[i][0][0] = PI[i] + B[i][ch_list[0]]
+#         else:
+#             s_matrix[i][0][0] = PI[i] + min_prob
+#         # 第一列不需要存储上一列的最优节点 所以赋值为-1
+#         s_matrix[i][0][1] = -1
+#         cur_prob = s_matrix[i][0][0] + B[i][ch_list[0]]
+#         if max_prob is None or max_prob < cur_prob:
+#             max_prob = cur_prob
+#             max_status = i
+#     return [max_prob, max_status]
 
 
 def get_max_hmm_matrix(PI, A, B, ch_list, s_matrix, sentence_len):
@@ -404,7 +404,8 @@ def get_max_hmm_matrix(PI, A, B, ch_list, s_matrix, sentence_len):
 if __name__ == '__main__':
     # train_theta()
     st = '无边落木萧萧下不尽长江滚滚来'
-    res = viterbi(st)
+    st2='不尽长江滚滚来'
+    res = viterbi(st2)
     print(res)
     # ch_list = get_word_ch_list(st)
     # slist = get_status_list_by_chlist(ch_list)
