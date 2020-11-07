@@ -1,6 +1,6 @@
 from sklearn.datasets import load_breast_cancer
 from sklearn.svm import SVC
-from sklearn.cross_validation import train_test_split
+from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as plt
 import numpy as np
 from time import time
@@ -12,7 +12,9 @@ data = load_breast_cancer()
 X = data.data
 y = data.target
 print(X.shape)
+# np.unique(y) 返回y的去重子集合
 print(np.unique(y))
+#散点图 X特征中下标为0和1的特征数据分别代表x，y，c表示数据点颜色（因为X对应的Y标签取值为0 1 故颜色有2种）
 plt.scatter(X[:,0],X[:,1],c=y)
 plt.show()
 
