@@ -11,7 +11,7 @@ W=tf.Variable(tf.zeros([784,10],name='W'))
 b=tf.Variable(tf.zeros([10]),name='b')
 
 with tf.name_scope('wx_b') as scope:
-    y_hat=tf.nn.softmax(tf.matmul(x,W)+b)
+    y_hat=(tf.matmul(x,W)+b)
 
 # 训练时添加 summary 操作来收集数据。使用直方图以便看到权重和偏置随时间相对于彼此值的变化关系。可以通过 TensorBoard Histogtam 选项卡看到
 w_h=tf.summary.histogram('weights',W)
