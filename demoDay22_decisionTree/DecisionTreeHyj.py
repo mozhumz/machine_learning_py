@@ -121,8 +121,6 @@ def get_best_feat_idx(data_list):
 '''
 根据样本和特征取值，筛选指定特征取值的数据 如年龄中的青年数据
 '''
-
-
 def get_feat_data(data_list, idx, val):
     res = []
     for row in data_list:
@@ -192,7 +190,7 @@ if __name__ == '__main__':
     # res1=get_entropy_by_data(data_list,1)
     # print(res)
     # print(res1)
-    # get_best_feat_idx(data_list)
+    # get_best_feat_idx(data_list)2
     # print(get_feat_data(data_list, 0, '青年'))
     # print(get_most_element([1,1,1,2,2,2,2,3,3,3,3,3]))
     # list1=[1,1,1,2,2,2,2,3,3,3,3,3]

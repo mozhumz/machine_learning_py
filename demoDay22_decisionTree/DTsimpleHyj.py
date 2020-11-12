@@ -133,4 +133,6 @@ def create_tree(data_list,cols):
     return 1
 
 cl_list=[1,1,2,3]
-print(get_most_y(cl_list))
+# print(get_most_y(cl_list))
+print(get_entropy([0.5,0.5]))
+print(get_entropy([1/3.,1/3.,1/3.]))

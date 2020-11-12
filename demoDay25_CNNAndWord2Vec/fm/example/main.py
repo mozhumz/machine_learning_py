@@ -7,11 +7,11 @@ import pandas as pd
 import tensorflow as tf
 from matplotlib import pyplot as plt
 from sklearn.metrics import make_scorer
-from sklearn.cross_validation import StratifiedKFold
+from sklearn.model_selection import StratifiedKFold
 
-import fm.example.config as config
-from fm.example.metrics import gini_norm
-from fm.example.DataReader import FeatureDictionary, DataParser
+import demoDay25_CNNAndWord2Vec.fm.example.config as config
+from demoDay25_CNNAndWord2Vec.fm.example.metrics import gini_norm
+from demoDay25_CNNAndWord2Vec.fm.example.DataReader import FeatureDictionary, DataParser
 sys.path.append("..")
 from demoDay25_CNNAndWord2Vec.fm.DeepFM import DeepFM
 
