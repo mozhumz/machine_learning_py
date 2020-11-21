@@ -4,13 +4,19 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sklearn import svm, datasets
 from sklearn.metrics import roc_curve, auc  # 计算roc和auc
-from sklearn import cross_validation
+from sklearn.model_selection import cross_validate,train_test_split
+from sklearn.preprocessing import StandardScaler
 
 # Import some data to play with
 iris = datasets.load_iris()
 X = iris.data
 y = iris.target
 
+
+avgX=np.sum(X[:,0])/len(X[:,0])
+s=np.sqrt((np.sum((X[:,0]-avgX)**2)/150 ))
+
+X0=StandardScaler().fit(X)
 print(set(y))  # {0, 1, 2}
 
 # 变为2分类
@@ -22,7 +28,7 @@ n_samples, n_features = X.shape
 X = np.c_[X, random_state.randn(n_samples, 200 * n_features)]
 
 # shuffle and split training and test sets
-X_train, X_test, y_train, y_test = cross_validation.train_test_split(X, y, test_size=.3,random_state=0)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=.3,random_state=0)
 
 # Learn to predict each class against the other
 svm = svm.SVC(kernel='linear', probability=True, random_state=random_state)
