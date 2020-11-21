@@ -4,7 +4,8 @@ import numpy as np
 import lightgbm as lgb
 from datetime import datetime
 from sklearn.model_selection import train_test_split
-
+from sklearn.metrics import roc_auc_score
+from sklearn.externals import joblib
 
 # pip install xgboost,lightgbm,sklearn  anaconda3
 IDIR = 'G://bigdata//badou//00-data//'
@@ -45,15 +46,17 @@ ans = model.predict(dtest)
 
 #
 # 计算准确率
-cnt1 = 0.
-cnt2 = 0.
-for i in range(len(y_test)):
-    if ans[i] > 0.3:
-        cnt1 += 1.
-    else:
-        cnt2 += 1.
-
-print("Accuracy: %.2f %% " % (100 * cnt1 / (cnt1 + cnt2)))
+# cnt1 = 0.
+# cnt2 = 0.
+# for i in range(len(y_test)):
+#     if ans[i] > 0.3:
+#         cnt1 += 1.
+#     else:
+#         cnt2 += 1.
+# print('cnt1 %s, cnt2%s'%(cnt1,cnt2))
+# print("xgb-Accuracy: %.2f %% " % (100 * cnt1 / (cnt1 + cnt2)))
+# model.dump_model(IDIR+'out/xgb.txt')
+joblib.dump(model,IDIR+'out/xgb.dat')
 
 
 # ##################lightGBM#########################
@@ -84,3 +87,6 @@ stop = datetime.now()
 # lightgbm
 execution_time_lgbm = stop - start
 print('lightgbm time cost: ', execution_time_lgbm)
+
+
+joblib.dump(lgbm,IDIR+'out/lgb.dat')
