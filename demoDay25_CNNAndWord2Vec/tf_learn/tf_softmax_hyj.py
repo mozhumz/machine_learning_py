@@ -72,7 +72,7 @@ pre='F:\\八斗学院\\视频\\14期正式课\\00-data\\nn\\'
 df_file=pre+'music_data.csv'
 df.to_csv(df_file,index=False)
 print('df to csv done')
-chunks = pd.read_csv(df_file,iterator = True)
+chunks = pd.read_csv(df_file,iterator = True,chunksize=1000)
 chunk = chunks.get_chunk(5)
 print(chunk)
 print(np.array(chunk))

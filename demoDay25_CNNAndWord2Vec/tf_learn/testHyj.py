@@ -106,19 +106,19 @@ print(type(v1))
 # print(np.linalg.norm(v2))
 import jieba
 from common import file_util
-pre='G:\\bigdata\\badou\\00-data\\data\\'
-out_dir=pre+'out\\'
-std_dir='std\\'
-docs=[]
-docs2=[]
-# 文本索引 k=文本名 v=index
-doc_id_dict={}
-for std_f in file_util.list_file(pre+std_dir):
-    doc_id_dict[std_f]=len(doc_id_dict)
-    with open(pre+std_dir+std_f,mode='r',encoding='utf-8') as f:
-        # docs.append('\n'.join(f.readlines()))
-        docs2.append(f.read())
-    break
+# pre='G:\\bigdata\\badou\\00-data\\data\\'
+# out_dir=pre+'out\\'
+# std_dir='std\\'
+# docs=[]
+# docs2=[]
+# # 文本索引 k=文本名 v=index
+# doc_id_dict={}
+# for std_f in file_util.list_file(pre+std_dir):
+#     doc_id_dict[std_f]=len(doc_id_dict)
+#     with open(pre+std_dir+std_f,mode='r',encoding='utf-8') as f:
+#         # docs.append('\n'.join(f.readlines()))
+#         docs2.append(f.read())
+#     break
 
 # print(docs2[0].split())
 # print('------------------------------')
@@ -155,4 +155,17 @@ from common import common_util
 #     print(line1)
 #     cut_line=jieba.cut(line1)
 #     print([i for i in cut_line])
+import pandas as pd
+pre='F:\\八斗学院\\视频\\14期正式课\\00-data\\nn\\'
+df_file=pre+'music_data.csv'
+print('df to csv done')
+# chunksize 参数，用以指定一个块大小(每次读取多少行)
+chunks = pd.read_csv(df_file,iterator = True,chunksize=1000)
+for chunk in chunks:
+    print(chunk.shape)
+
+chunk = chunks.get_chunk(5)
+print(chunk)
+print(np.array(chunk))
+
 
