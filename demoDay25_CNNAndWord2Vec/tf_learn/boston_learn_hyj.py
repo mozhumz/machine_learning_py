@@ -56,9 +56,13 @@ def train_multi():
     init_op = tf.global_variables_initializer()
     # 每次迭代的损失数组
     epoch_loss_arr = []
+    saver=tf.train.Saver()
+    modelPath='./model/bostonMulti.ckpt'
     with tf.Session() as sess:
         sess.run(init_op)
         print('init op done')
+        # 加载旧的模型
+        saver.restore(sess,modelPath)
         writer = tf.summary.FileWriter(logdir='graphs', graph=sess.graph)
         for i in range(100):
             total_loss = 0.0
@@ -71,6 +75,10 @@ def train_multi():
 
         writer.close()
         w_val = sess.run(w)
+        # 保存模型 保存后有4个文件：bostonMulti.ckpt.data-00000-of-00001 bostonMulti.ckpt.index
+        # checkpoint bostonMulti.ckpt.meta
+        savedRes=saver.save(sess,modelPath)
+        print(savedRes)
     # 绘制损失图
     plt.plot(epoch_loss_arr)
     plt.show()
@@ -174,6 +182,7 @@ def gen_data(feat_batch,label_batch):
             coord.join(threads)
 #
 #
-# if __name__ == '__main__':
-#     feat_batch,label_batch=data_gen([data_file])
-#     gen_data(feat_batch,label_batch)
+if __name__ == '__main__':
+    # feat_batch,label_batch=data_gen([data_file])
+    # gen_data(feat_batch,label_batch)
+    train_multi()
