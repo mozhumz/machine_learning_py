@@ -29,16 +29,40 @@ def get_loss(y:np.array([[]]),y_hat:np.array([[]])):
     res=np.sum(y*np.log(mat_val))
     return res
 
-y=np.array([[0,1,0],[0,1,0]])
-y_hat=np.array([[0.9,0.1,1],[0.2,0.8,2]])
-print(np.argmax(y,axis=1))
-print(get_loss(y,y_hat))
-loss=tf.reduce_sum(tf.nn.softmax_cross_entropy_with_logits(labels=y,logits=y_hat))
+# y=np.array([[0,1,0],[0,1,0]])
+# y_hat=np.array([[0.9,0.1,1],[0.2,0.8,2]])
+# print(np.argmax(y,axis=1))
+# print(get_loss(y,y_hat))
+# loss=tf.reduce_sum(tf.nn.softmax_cross_entropy_with_logits(labels=y,logits=y_hat))
+import matplotlib.pyplot as plt
+x=[]
+x2=[]
+x3=[]
+y=[]
+for i in range(1000):
+   x.append(np.floor(np.random.normal(8400,200)))
+   x2.append(np.floor(np.random.uniform(6800,8400)))
+   x3.append(np.floor(np.random.poisson(8400)))
+
+plt.plot(x,y)
+plt.show()
+plt.plot(x2)
+plt.show()
+plt.plot(x3)
+plt.show()
+
+def printX(x):
+    x=np.array(x)
+    print(np.max(x), np.min(x), np.mean(x), np.std(x))
+
+
+printX(x)
+printX(x2)
+printX(x3)
 
 
 
 
-
-with tf.Session() as sess:
-    loss_val=sess.run(loss)
-    print(loss_val)
+# with tf.Session() as sess:
+#     loss_val=sess.run(loss)
+#     print(loss_val)

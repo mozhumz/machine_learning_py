@@ -1,0 +1,22 @@
+CREATE TABLE `his_task_used_time` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT COMMENT '序号',
+  `match_rate` int DEFAULT NULL COMMENT '高优业务标签',
+  `is_nine_trs` int DEFAULT NULL COMMENT '是否属于9种业务类型 0否 1是',
+  `is_corr_nod` int DEFAULT NULL COMMENT '该任务是否与该作业员处理过的一致 1是 0否',
+  `amount` float DEFAULT NULL COMMENT '业务金额等级',
+  `inx_roles` int DEFAULT NULL COMMENT '所属组的位置',
+  `inx_grpid` int DEFAULT NULL COMMENT '任务岗位在作业员所属岗位的位置',
+  `fstflg` int DEFAULT NULL COMMENT '是否为加急任务 1是 0否',
+  `t1_distinct` float DEFAULT NULL COMMENT '分钟：按承诺时间计算的剩余的服务时间',
+  `t2_distinct` float DEFAULT NULL COMMENT '分钟：历史上任务派发平均等待时间',
+  `t3_distinct` float DEFAULT NULL COMMENT '分钟：减去预测派发等待时间和预测处理耗时之后剩余的时间',
+  `t4_distinct` float DEFAULT NULL COMMENT '分钟：减去预测处理耗时之后剩余的时间',
+  `y` float DEFAULT NULL COMMENT '分钟：任务耗时',
+  `create_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `update_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `is_valid` int NOT NULL DEFAULT '1' COMMENT '是否正常数据 1是 0删除',
+  `wkiid` varchar(100) NOT NULL COMMENT '任务id',
+  `yichu` int DEFAULT NULL COMMENT '是否为溢出 1是 0否',
+  PRIMARY KEY (`id`),
+  KEY `his_task_used_time_create_time_IDX` (`create_time`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='历史任务耗时表'
