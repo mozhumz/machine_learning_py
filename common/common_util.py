@@ -163,6 +163,7 @@ def mkdirs(file,is_file=True):
     print(dir)
     if not os.path.exists(dir):
         os.makedirs(dir)
+    return
 
 
 def trim_with_space_flag(text, space_flag=False,trim_abc=False):

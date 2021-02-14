@@ -1,5 +1,7 @@
 import os
 import common.common_util as common_util
+import pathlib
+
 def read_file(file_path:str):
     with open(file_path,mode='r',encoding='utf-8') as f:
         lines=f.readlines()
@@ -64,6 +66,12 @@ def get_format_lines(in_file, in_path):
     return read_lines
 
 def save_obj(obj,file_path):
+    '''
+    保存obj到文件
+    :param obj:
+    :param file_path:
+    :return:
+    '''
     if obj:
         with open(file_path,mode='w',encoding='utf-8') as f:
             f.write(str(obj))
@@ -71,10 +79,29 @@ def save_obj(obj,file_path):
     else:
         print('obj is None:',file_path)
 
+
 def read_obj(file_path):
+    '''
+    从文件读取obj
+    :param file_path:
+    :return:
+    '''
     with open(file_path,mode='r',encoding='utf-8') as f:
         return eval(f.read())
 
-if __name__ == '__main__':
-    path='G:\\bigdata\\badou\\00-data\\'
-    merge_text_files(path+'data\\',path+'word2vec\\test\\news_merge.txt')
+
+
+def touch_empty_file(file):
+    '''
+    创建空文件
+    :param file:
+    :return:
+    '''
+    common_util.mkdirs(file)
+    pathlib.Path(file).touch()
+    return
+
+
+# if __name__ == '__main__':
+#     path='G:\\bigdata\\badou\\00-data\\'
+#     merge_text_files(path+'data\\',path+'word2vec\\test\\news_merge.txt')

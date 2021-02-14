@@ -49,7 +49,7 @@ def train_multi():
     # model
     y_hat = tf.matmul(X, w)
     # 损失
-    loss = tf.square(Y - y_hat, name='loss')
+    loss = tf.nn.square(Y - y_hat, name='loss')
     # 梯度优化器
     optimizer = tf.train.GradientDescentOptimizer(learning_rate=0.01).minimize(loss)
     # 全局初始化Variable

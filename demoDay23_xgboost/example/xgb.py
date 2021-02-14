@@ -83,6 +83,7 @@ lgbm = lgb.train(params_lgbm, train_data,
                  num_round,
                  valid_sets=[train_data, val_data],
                  early_stopping_rounds=50)
+
 stop = datetime.now()
 # lightgbm
 execution_time_lgbm = stop - start

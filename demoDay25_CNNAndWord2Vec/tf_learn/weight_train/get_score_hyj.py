@@ -30,13 +30,22 @@ def get_wikiid_score(wkiid_dict):
 
         return min_max_scaler
 
-    t1_range = getNormalization(df['t1_distinct'].min(), df['t1_distinct'].max())
-    t2_range = getNormalization(df['t2_distinct'].min(), df['t2_distinct'].max())
-    t3_range = getNormalization(df['t3_distinct'].min(), df['t3_distinct'].max())
-    t4_range = getNormalization(df['t4_distinct'].min(), df['t4_distinct'].max())
-    acc_range = getNormalization(df['amount'].min(), df['amount'].max())
-    rol_range = getNormalization(df['inx_roles'].min(), df['inx_roles'].max())
-    grp_range = getNormalization(df['inx_grpid'].min(), df['inx_grpid'].max())
+    # t1_range = getNormalization(df['t1_distinct'].min(), df['t1_distinct'].max())
+    # t2_range = getNormalization(df['t2_distinct'].min(), df['t2_distinct'].max())
+    # t3_range = getNormalization(df['t3_distinct'].min(), df['t3_distinct'].max())
+    # t4_range = getNormalization(df['t4_distinct'].min(), df['t4_distinct'].max())
+    # acc_range = getNormalization(df['amount'].min(), df['amount'].max())
+    # rol_range = getNormalization(df['inx_roles'].min(), df['inx_roles'].max())
+    # grp_range = getNormalization(df['inx_grpid'].min(), df['inx_grpid'].max())
+
+    t1_range = getNormalization(5, 600)
+    t2_range = getNormalization(280,320)
+    t3_range = getNormalization(130,170)
+    t4_range = getNormalization(130, 170)
+    acc_range = getNormalization(1, 10)
+    rol_range = getNormalization(0, 10)
+    grp_range = getNormalization(0, 10)
+
     for key, value in wkiid_dict.items():
         match_rate, is_nine_trs, t1_distinct, t2_distinct, t3_distinct, t4_distinct, is_corr_nod, strorg, trschl, ntsgrp, cusflg, paynum, drenum, imgcnt, amount, cnyno, inx_roles, inx_grpid, yichu_priori, fstflg = value
         if match_rate == 100:
