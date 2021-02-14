@@ -1,9 +1,9 @@
 import pandas as pd
 import numpy as np
 import random
-from demoDay25_CNNAndWord2Vec.tf_learn.weight_train.get_score_hyj import get_wikiid_score
+from tf_learn.weight_train.get_score_hyj import get_wikiid_score
 from common.db_util import getConn
-from sklearn.model_selection import train_test_split, cross_validate
+from sklearn.model_selection import train_test_split, cross_validate,GridSearchCV
 from sklearn import linear_model, preprocessing
 from concurrent.futures import ThreadPoolExecutor
 import tensorflow.keras as ks
@@ -234,6 +234,24 @@ def train_lightgbm(df, labels):
     return
 
 
+def train_lgbm_grid_by_skapi(df, labels):
+    '''
+    lightgbm网格搜索
+    :param df:
+    :param labels:
+    :return:
+    '''
+    model = lgb.LGBMRegressor(boosting_type='gbdt', objective='regression',
+                              n_estimators=99, max_depth=-1, reg_lambda=0.1, metric='mse', bagging_fraction=0.8,
+                              feature_fraction=0.8, bagging_seed=2019, bagging_freq=1, num_iterations=120,
+                              min_data_in_leaf=50, min_sum_hessian_in_leaf=6)
+    params={'num_leaves':[15,20,25,30,35],'learning_rate':[0.06,0.07,0.08,0.09,0.1,0.11]}
+    grid=GridSearchCV(model,param_grid=params,cv=10,scoring='r2')
+    grid.fit(df.values,labels)
+    print('train_lgbm_grid_by_skapi-score: %s,%s' % (grid.best_score_,grid.best_params_))
+
+    return
+
 def train_lgbm_by_skapi(df, labels):
     '''
     基于sklearn的lightgbm
@@ -241,7 +259,7 @@ def train_lgbm_by_skapi(df, labels):
     :param labels:
     :return:
     '''
-    X_train, X_test, y_train, y_test = split_data(df, labels)
+    # X_train, X_test, y_train, y_test = split_data(df, labels)
 
     loss_list=[]
     eta_range=range(10)
@@ -254,12 +272,15 @@ def train_lgbm_by_skapi(df, labels):
                                   feature_fraction=0.8, bagging_seed=2019, bagging_freq=1, num_iterations=120,
                                   min_data_in_leaf=50, min_sum_hessian_in_leaf=6)
         # 交叉验证
-        loss=cross_validate(model, df.values, labels, cv=10,scoring='mse')
+        from sklearn import metrics
+        print(sorted(metrics.SCORERS.keys()))
+        loss=cross_validate(model, df.values, labels, cv=10,scoring='r2')
         eta_list.append(eta)
         loss_list.append(loss['test_score'].mean())
 
     plt.scatter(eta_list,loss_list)
     plt.show()
+
     # model.fit(X_train, y_train, eval_set=(X_test, y_test), early_stopping_rounds=50)
     # y_hat = model.predict(X_test)
     # loss = computeLoss(y_hat, y_test)
@@ -296,7 +317,8 @@ if __name__ == '__main__':
     # nn_train_by_ks(df,labels)
     # train_xgb_by_sk(df,labels)
     # train_lightgbm(df,labels)
-    train_lgbm_by_skapi(df, labels)
+    # train_lgbm_by_skapi(df, labels)
+    train_lgbm_grid_by_skapi(df,labels)
     conn.close()
 
     print('main done')
