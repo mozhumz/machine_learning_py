@@ -156,7 +156,7 @@ from common import common_util
 #     cut_line=jieba.cut(line1)
 #     print([i for i in cut_line])
 # import pandas as pd
-# pre='F:\\八斗学院\\视频\\14期正式课\\00-data\\nn\\'
+# pre='F:\\00-data\\nn\\'
 # df_file=pre+'music_data.csv'
 # print('df to csv done')
 # # chunksize 参数，用以指定一个块大小(每次读取多少行)

@@ -20,7 +20,7 @@ def maybe_download(filename):
     return filename
 
 
-filename = maybe_download('text8.zip')
+filename = maybe_download('F:\\00-data/word2vec/text8.zip')
 
 
 # 读取数据到list
@@ -81,6 +81,7 @@ data_index = 0
 
 def generate_batch(batch_size, num_skips, skip_window):
     '''
+    生成样本对(target,context) label为context
     :param batch_size: batch大小
     :param num_skips: 对每个单词生成多少个样本
     :param skip_window:单词最远可联系的距离

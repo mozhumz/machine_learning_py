@@ -1,6 +1,6 @@
 import math
 # pre='G:\\bigdata\\badou\\00-data\\'
-pre = 'F:\\八斗学院\\视频\\14期正式课\\00-data\\'
+pre = 'F:\\00-data\\'
 data_path = pre+'allfiles.txt'
 mode_path = pre+'out\\hmm\\hmm.mod'
 # 一、初始化模型参数（π初始状态，a转移矩阵，b发射矩阵）

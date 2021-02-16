@@ -2,7 +2,7 @@
 import tensorflow as tf
 from tensorflow.examples.tutorials.mnist import input_data
 # 2 读取数据
-mnist=input_data.read_data_sets("F:\\八斗学院\\视频\\14期正式课\\00-data\\MNIST",one_hot=True)
+mnist=input_data.read_data_sets("F:\\00-data\\MNIST",one_hot=True)
 '''
 3
 定义超参数和其他常量。这里，每个手写数字的尺寸是 28×28=784 像素。数据集被分为 10 类，以 0 到 9 之间的数字表示。

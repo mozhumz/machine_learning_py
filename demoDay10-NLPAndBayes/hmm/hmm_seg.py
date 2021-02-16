@@ -1,7 +1,7 @@
 import jieba
 
 # pre = 'G:\\bigdata\\badou\\00-data\\'
-pre = 'F:\\八斗学院\\视频\\14期正式课\\00-data\\'
+pre = 'F:\\00-data\\'
 mode_path = pre + 'out\\hmm\\hyj_hmm.model'
 filter_val = 0.02
 # 频次为0的默认无穷小概率

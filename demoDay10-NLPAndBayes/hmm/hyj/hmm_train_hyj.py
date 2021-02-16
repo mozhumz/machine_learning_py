@@ -20,7 +20,7 @@
 import math
 
 '''读取数据'''
-pre = 'F:\\八斗学院\\视频\\14期正式课\\00-data\\'
+pre = 'F:\\00-data\\'
 train_file = pre + 'allfiles.txt'
 save_file = pre + 'out\\hmm\\hyj_hmm.model'
 # 隐藏状态数量

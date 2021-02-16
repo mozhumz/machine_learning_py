@@ -19,7 +19,7 @@ tf.config.experimental.set_visible_devices(devices=gpus[0], device_type='GPU')
 # 也使用环境变量 CUDA_VISIBLE_DEVICES 也可以控制程序所使用的 GPU 可指定程序只在显卡0上运行
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
-(train_images, train_labels), (test_images, test_labels) = tf.keras.datasets.mnist.load_data("F:\\八斗学院\\视频\\14期正式课\\00-data\\mnist2/")
+(train_images, train_labels), (test_images, test_labels) = tf.keras.datasets.mnist.load_data("F:\\00-data\\mnist2/")
 train_images = train_images.reshape((60000, 28, 28, 1))
 test_images = test_images.reshape((10000, 28, 28, 1))
 # 特征缩放[0, 1]区间

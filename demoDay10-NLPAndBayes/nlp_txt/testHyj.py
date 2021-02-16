@@ -23,7 +23,7 @@ print(res)
 # text= re.sub(r"[{}]+".format(punc)," ",text)
 # print(text)
 
-# file_pre='F:\\八斗学院\\视频\\14期正式课\\00-data\\data\\'
+# file_pre='F:\\00-data\\data\\'
 # file1=file_pre+'1business.seg.cln.txt'
 # with open(file1,mode='r',encoding='utf-8') as f:
 #     content=f.read()

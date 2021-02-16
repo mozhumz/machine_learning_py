@@ -68,7 +68,7 @@ one_hot_cols=df.columns
 # 连续特征不做one-hot 直接存储
 df[continue_feat]=data[continue_feat]
 df['label']=labels
-pre='F:\\八斗学院\\视频\\14期正式课\\00-data\\nn\\'
+pre='F:\\00-data\\nn\\'
 df_file=pre+'music_data.csv'
 df.to_csv(df_file,index=False)
 print('df to csv done')

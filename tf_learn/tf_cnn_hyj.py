@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 from tensorflow.examples.tutorials.mnist import input_data
 # import os
 # os.environ["CUDA_VISIBLE_DEVICES"] = ""
-# pre='F:\\八斗学院\\视频\\14期正式课\\00-data\\MNIST'
+# pre='F:\\00-data\\MNIST'
 pre='G:\\bigdata\\badou\\00-data\\MNIST2'
 mnist = input_data.read_data_sets(pre, one_hot=True)
 

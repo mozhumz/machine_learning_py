@@ -17,7 +17,7 @@ import torch.optim as optim
 '''
 torchvision的输出是[0,1]的PILImage图像,我们把它转换为归一化范围为[-1, 1]的张量
 '''
-# pre='F:\\八斗学院\\视频\\14期正式课\\00-data\\CIFAR10'
+# pre='F:\\00-data\\CIFAR10'
 pre = 'G:\\bigdata\\badou\\00-data\\CIFAR10'
 # 加载数据
 tranform = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])

@@ -3,7 +3,7 @@ import tensorflow as tf
 from matplotlib import pyplot as plt,image as mpimg
 from tensorflow.examples.tutorials.mnist import input_data
 import math
-mnist = input_data.read_data_sets('F:\\八斗学院\\视频\\14期正式课\\00-data\\MNIST', one_hot=True)
+mnist = input_data.read_data_sets('F:\\00-data\\MNIST', one_hot=True)
 
 x=tf.placeholder(tf.float32,shape=[None,784],name='X')
 y=tf.placeholder(tf.float32,shape=[None,10],name='Y')
