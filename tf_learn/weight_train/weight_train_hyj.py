@@ -12,6 +12,7 @@ import xgboost as xgb
 import threading
 import lightgbm as lgb
 import matplotlib.pyplot as plt
+import joblib
 
 def randint(a, b):
     '''
@@ -223,6 +224,8 @@ def train_lightgbm(df, labels):
     test_data = lgb.Dataset(X_test, y_test)
     model = lgb.train(params, train_data, num_boost_round=100, valid_sets=test_data, early_stopping_rounds=50)
 
+    print('feature_importance',model.feature_importance())
+
     y_hat = model.predict(X_test)
     loss = computeLoss(y_hat, y_test)
     print('train_lightgbm loss %s' % loss)
@@ -241,14 +244,58 @@ def train_lgbm_grid_by_skapi(df, labels):
     :param labels:
     :return:
     '''
-    model = lgb.LGBMRegressor(boosting_type='gbdt', objective='regression',
-                              n_estimators=99, max_depth=-1, reg_lambda=0.1, metric='mse', bagging_fraction=0.8,
-                              feature_fraction=0.8, bagging_seed=2019, bagging_freq=1, num_iterations=120,
-                              min_data_in_leaf=50, min_sum_hessian_in_leaf=6)
+    model_params = {
+        'task': 'train',
+        'num_leaves': 38,
+        'min_data_in_leaf': 50,
+        'objective': 'regression',  # 线性回归
+        'max_depth': -1,  # 树的深度
+        'learning_rate': 0.1,
+        "min_sum_hessian_in_leaf": 6,
+        "boosting": "gbdt",  # 树类型 options: gbdt, rf, dart, goss, aliases: boosting_type
+        'bagging_fraction': 0.8,  # 数据采样 aliases: sub_row, subsample, bagging
+        'feature_fraction': 0.8,  # 特征采样 aliases: sub_feature, colsample_bytree
+        "bagging_freq": 1,  # 0 means disable bagging; k means perform bagging at every k iteration
+        "bagging_seed": 2019,
+        "lambda_l2": 0.1,  # 正则化
+        # "verbosity": -1,
+        "nthread": 4,
+        'metric': 'mse',  # absolute loss 绝对值损失,mae即 l1
+        "random_state": 2019,
+        'tree_method': 'gpu_hist'  # 使用gpu
+        # 'device': 'gpu'
+    }
+    model = lgb.LGBMRegressor()
+    model.set_params(**model_params)
+    # model = lgb.LGBMRegressor(boosting_type='gbdt', objective='regression',
+    #                           n_estimators=99, max_depth=-1, reg_lambda=0.1, metric='mse', bagging_fraction=0.8,
+    #                           feature_fraction=0.8, bagging_seed=2019, bagging_freq=1, num_iterations=50,
+    #                           min_data_in_leaf=50, min_sum_hessian_in_leaf=6)
     params={'num_leaves':[15,20,25,30,35],'learning_rate':[0.06,0.07,0.08,0.09,0.1,0.11]}
-    grid=GridSearchCV(model,param_grid=params,cv=10,scoring='r2')
+    grid=GridSearchCV(model,param_grid=params,cv=5,scoring='r2')
     grid.fit(df.values,labels)
-    print('train_lgbm_grid_by_skapi-score: %s,%s' % (grid.best_score_,grid.best_params_))
+    print('train_lgbm_grid_by_skapi-score: best-score %s, best-params %s, cv_res %s'
+          % (grid.best_score_,grid.best_params_,grid.cv_results_))
+    # 更新网格搜索的参数
+    model.set_params(**grid.best_params_)
+    # 划分数据集
+    X_train, X_test, y_train, y_test = split_data(df, labels)
+    # 训练
+    model.fit(X_train,y_train,early_stopping_rounds=30,eval_set=(X_test,y_test))
+    import common.common_util as util
+
+    file=util.get_parent_dir()+'/model/train_lgbm_grid_by_skapi.joblib'
+    util.mkdirs(file)
+    joblib.dump(model,file)
+    del model
+    model=joblib.load(file)
+    # 预测
+    y_hat = model.predict(X_test)
+    loss = computeLoss(y_hat, y_test)
+    print('train_lgbm_grid_by_skapi loss %s' % loss)
+
+
+
 
     return
 
@@ -304,7 +351,7 @@ if __name__ == '__main__':
           "is_corr_nod,amount,inx_roles, inx_grpid, yichu, fstflg,y" \
           " from his_task_used_time " \
           "ORDER BY id " \
-          "limit 100000"
+          "limit 10000"
     df = pd.read_sql(sql, conn)
     labels = df['y'].values
     del df['y']
@@ -316,7 +363,7 @@ if __name__ == '__main__':
     # multi_train_by_sk(df,labels)
     # nn_train_by_ks(df,labels)
     # train_xgb_by_sk(df,labels)
-    # train_lightgbm(df,labels)
+    train_lightgbm(df,labels)
     # train_lgbm_by_skapi(df, labels)
     train_lgbm_grid_by_skapi(df,labels)
     conn.close()

@@ -9,28 +9,30 @@ import jieba
 from datetime import datetime
 import logging
 
-
 # 标点符号集合
 punc = punctuation + r'··.,;\\《》？！“”‘’@#￥%…&×（）——+【】{};；●，。&～、|:：'
 # 标点符号集合包括字母
-punc2=punc + r'\sA-Za-z～()（）【】%*#+-\.\\\/:=：__,，。、;；“”""''’‘？?！!<《》>^&{}|=……'
+punc2 = punc + r'\sA-Za-z～()（）【】%*#+-\.\\\/:=：__,，。、;；“”""''’‘？?！!<《》>^&{}|=……'
 dicts = {i: '' for i in punc}
 dicts2 = {i: '' for i in punc2}
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 # 中英文字符串匹配
-cn_and_abc_reg='^[\u4e00-\u9fa5a-zA-Z]+$'
-cn_only_reg='^[\u4e00-\u9fa5a-zA-Z]+$'
-contains_cn_or_abc_or_num= '[\u4e00-\u9fa5a-zA-Z0-9]'
-def get_timestamp(seconds=0.,print_f=True):
+cn_and_abc_reg = '^[\u4e00-\u9fa5a-zA-Z]+$'
+cn_only_reg = '^[\u4e00-\u9fa5a-zA-Z]+$'
+contains_cn_or_abc_or_num = '[\u4e00-\u9fa5a-zA-Z0-9]'
+
+
+def get_timestamp(seconds=0., print_f=True):
     '''
     获取当前时间
     :return: 返回秒值
     '''
-    #创建一个datetime类对象
-    dt=datetime.now()
+    # 创建一个datetime类对象
+    dt = datetime.now()
     if print_f:
         print_time(dt)
-    return dt.timestamp()+seconds
+    return dt.timestamp() + seconds
+
 
 def print_time(dt=datetime.now()):
     '''
@@ -38,9 +40,10 @@ def print_time(dt=datetime.now()):
     :param dt:
     :return:
     '''
-    print('时间：' , dt.strftime( '%Y-%m-%d %H:%M:%S %f' ))
+    print('时间：', dt.strftime('%Y-%m-%d %H:%M:%S %f'))
 
-def zh_trim_by_file(input_file_path:str, output_file_path:str,only_zh=True):
+
+def zh_trim_by_file(input_file_path: str, output_file_path: str, only_zh=True):
     '''
     根据文件路径去除非中文词
     :param input_file_path:
@@ -56,9 +59,9 @@ def zh_trim_by_file(input_file_path:str, output_file_path:str,only_zh=True):
     count = 1
     # ^[\u4e00-\u9fa5_a-zA-Z0-9]+$
     if only_zh:
-        cn_reg =cn_only_reg
+        cn_reg = cn_only_reg
     else:
-        cn_reg=cn_and_abc_reg
+        cn_reg = cn_and_abc_reg
     for line in lines:
         line_list = line.split('\n')[0].split(' ')
         line_list_new = []
@@ -73,9 +76,7 @@ def zh_trim_by_file(input_file_path:str, output_file_path:str,only_zh=True):
     print('zh_trim_by_file done！')
 
 
-
-
-def jieba_cut_by_file(input_file_path:str, output_file_path:str):
+def jieba_cut_by_file(input_file_path: str, output_file_path: str):
     '''
     根据文件路径进行jieba分词
     :param input_file_path:
@@ -98,9 +99,7 @@ def jieba_cut_by_file(input_file_path:str, output_file_path:str):
     print('jieba_cut_by_file done！')
 
 
-
-
-def tradition2simple(input_file_path:str, output_file_path:str):
+def tradition2simple(input_file_path: str, output_file_path: str):
     '''
     繁体转简体
     :param input_file_path:
@@ -126,9 +125,7 @@ def tradition2simple(input_file_path:str, output_file_path:str):
     print('tradition2simple done')
 
 
-
-
-def wikixml2txt(input_file_path:str, output_file_path:str):
+def wikixml2txt(input_file_path: str, output_file_path: str):
     '''
     将从网络上下载的xml格式的wiki百科训练语料转为txt格式
     :param input_file_path:
@@ -154,19 +151,38 @@ def wikixml2txt(input_file_path:str, output_file_path:str):
 
 
 # 根据文件路径（相对或绝对）创建目录
-def mkdirs(file,is_file=True):
+def mkdirs(file, is_file=True):
     # 获取文件的当前目录
     if is_file:
         dir = os.path.dirname(os.path.abspath(file))
     else:
-        dir=file
+        dir = file
     print(dir)
     if not os.path.exists(dir):
         os.makedirs(dir)
     return
 
 
-def trim_with_space_flag(text, space_flag=False,trim_abc=False):
+def get_current_dir():
+    '''
+    获取当前目录
+    :return:
+    '''
+    return os.getcwd()
+
+
+def get_parent_dir(path=None):
+    '''
+    获取上级目录
+    :param path:
+    :return:
+    '''
+    if not path:
+        path = get_current_dir()
+    return os.path.dirname(path)
+
+
+def trim_with_space_flag(text, space_flag=False, trim_abc=False):
     """
     去除标点，用空格替换
     :param trim_abc 是否去除字母 默认否
@@ -188,35 +204,37 @@ def trim_with_str_translate(text):
         return ''
     return text.translate(str.maketrans(dicts))
 
-def cos_sim(v1:[],v2:[]):
-    '''向量相似度'''
-    v_len=len(v1)
-    dot=0.
-    square_v1=0.
-    square_v2=0.
-    for i in range(v_len):
-        dot+=v1[i]*v2[i]
-        square_v1+=v1[i]*v1[i]
-        square_v2+=v2[i]*v2[i]
-    return dot/(math.sqrt(square_v1)*math.sqrt(square_v2))
 
-def convert_softmax_value(v:[]):
+def cos_sim(v1: [], v2: []):
+    '''向量相似度'''
+    v_len = len(v1)
+    dot = 0.
+    square_v1 = 0.
+    square_v2 = 0.
+    for i in range(v_len):
+        dot += v1[i] * v2[i]
+        square_v1 += v1[i] * v1[i]
+        square_v2 += v2[i] * v2[i]
+    return dot / (math.sqrt(square_v1) * math.sqrt(square_v2))
+
+
+def convert_softmax_value(v: []):
     '''向量之softmax转换'''
-    sum=0.
+    sum = 0.
     for i in range(len(v)):
-        sum+=math.exp(v[i])
+        sum += math.exp(v[i])
     for j in range(len(v)):
-            v[j]=math.exp(v[j])/sum
+        v[j] = math.exp(v[j]) / sum
     return v
 
-def check_str(word:str, reg=contains_cn_or_abc_or_num):
+
+def check_str(word: str, reg=contains_cn_or_abc_or_num):
     '''
     判断字符串是否包含中文或英文或数字
     :param word:
     :return:
     '''
-    return bool(re.search(reg,word))
-
+    return bool(re.search(reg, word))
 
 
 # def log(msg,level=logging.INFO):
@@ -249,4 +267,5 @@ if __name__ == '__main__':
     # cn_reg='^[\u4e00-\u9fa5a-zA-Z]+$'
     # print(re.search(cn_reg,' word'))
     # ls=['a']
-    print(bool(re.search(contains_cn_or_abc_or_num, '123')))
+    # print(bool(re.search(contains_cn_or_abc_or_num, '123')))
+    print(get_parent_dir())
