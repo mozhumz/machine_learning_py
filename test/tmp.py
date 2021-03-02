@@ -36,3 +36,25 @@ params = {'num_leaves': 60, #结果对最终效果影响较大，越大值越好
           "random_state": 2019,	#随机数种子，可以防止每次运行的结果不一致
           # 'device': 'gpu' ##如果安装的事gpu版本的lightgbm,可以加快运算
           }
+import pandas as pd
+from fbprophet import Prophet
+# 读入数据集
+df = pd.read_csv('F:/tmp/pro.csv')
+m = Prophet()
+m.fit(df)
+
+# 构建待预测日期数据框，periods = 365 代表除历史数据的日期外再往后推 365 天
+future = m.make_future_dataframe(periods=365)
+forecast = m.predict(future)
+print(forecast)
+print('---------------')
+import pickle,joblib
+joblib.dump(m,'pro.joblib')
+del m
+m=joblib.load('pro.joblib')
+future = m.make_future_dataframe(periods=365)
+forecast = m.predict(future)
+with open('pro.pkl', 'wb') as f:
+    # , protocol=pickle.HIGHEST_PROTOCOL
+    pickle.dump(m, f)
+print('ok')
