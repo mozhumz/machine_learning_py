@@ -17,9 +17,9 @@ def validateTitle( title):
     new_title = re.sub(rstr, "", title)  # 替换为空
     return new_title
 
-# str='ssSS2   ,”'
-# newStr=get_word(str)
-# print newStr
+str='ssSS2   ,”'
+newStr=get_word(str)
+print (newStr)
 #
 # dict = {}
 # a=1
@@ -38,3 +38,14 @@ if s:
     print(str(s != ""))
 else:
     print("jj")
+def testEq(str1,str2):
+    map1=dict()
+    for i in str1:
+        map1[i]=True
+    for j in str2:
+        res=map1.get(j,False)
+        if res==False:
+            return False
+    return True
+
+print(testEq("ab","abs"))

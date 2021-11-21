@@ -2,9 +2,9 @@
 隐马尔可夫模型
 三个参数θ的计算：
 假设隐藏状态共M个
-初始状态概率（M）= 所有文章第一个字为k状态的频次 / 所有文章第一个字的状态的频次
-状态转移概率（M*M）= 所有文章l状态到k状态的频次 / 所有文章l状态的频次
-发射概率（M*N，N表示句子的长度）= 所有文章k状态下观测值“我”的频次 / 所有文章k状态的频次
+初始状态概率（M）= sum(每篇文章第一个字为k状态的频次) / sum(每篇文章第一个字的状态的频次)
+状态转移概率（M*M）= sum(每篇文章k状态到l状态的频次) / sum(每篇文章k状态的频次)
+发射概率（M*N，N表示句子的长度）= sum(每篇文章k状态下某观测值Ot的频次) / sum(每篇文章k状态的频次)
 
 训练：样本为allfiles.txt，该文件一行是一篇文章，且每篇文章已经分词
 即在已知每篇文章的分词序列后，计算θ，然后根据θ和观测序列O（如一个未分词的句子），计算最佳的隐藏序列S，
@@ -18,10 +18,15 @@
 '''
 
 import math
+import jieba
 
 '''读取数据'''
+wiki_flag=False
 pre = 'F:\\00-data\\'
-train_file = pre + 'allfiles.txt'
+if wiki_flag:
+    train_file='F:\\00-data\word2vec\\wiki.txt'
+else:
+    train_file = pre + 'allfiles.txt'
 save_file = pre + 'out\\hmm\\hyj_hmm.model'
 # 隐藏状态数量
 STATUS_NUM = 4
@@ -54,12 +59,16 @@ def get_status_list_by_chlist(ch_list: []):
     if len_ch == 0:
         return []
     if len_ch == 1:
+        # S
         return [3]
 
     res = [-1 for i in range(len_ch)]
+    # B
     res[0] = 0
+    # E
     res[-1] = 2
     for j in range(1, len_ch - 1):
+        # M
         res[j] = 1
 
     return res
@@ -85,6 +94,10 @@ def count_b(b_matrix, ch_list, i, status_list):
 
 
 def train_theta():
+    '''
+    训练入口
+    :return:
+    '''
     # 初始状态概率 M个
     start_prob = [0. for i in range(STATUS_NUM)]
     # 状态转移概率矩阵 M*M
@@ -129,7 +142,12 @@ def train_theta():
             # 每篇文章的文字序列O
             article_ch_list = []
             #  words[:-1]最后一个不是词语，需要过滤
-            for word in words[:-1]:
+            if wiki_flag:
+                word_list=words
+            else:
+                word_list=words[:-1]
+
+            for word in word_list:
                 # 词语的文字序列
                 ch_list = get_word_ch_list(word)
                 # 词语的状态序列
@@ -401,13 +419,26 @@ def get_max_hmm_matrix(PI, A, B, ch_list, s_matrix, sentence_len):
             s_matrix[j][ch_j][1] = max_status
 
 
+def read_file(path):
+    with open(path, mode='r', encoding='utf-8') as f:
+       line=f.readline()
+       while line:
+        print(line)
+        line=f.readline()
+
 if __name__ == '__main__':
+    # read_file('F:\\00-data\word2vec\\wiki.txt')
     # train_theta()
-    st = '无边落木萧萧下不尽长江滚滚来'
-    st2='不尽长江滚滚来'
-    res = viterbi(st2)
-    print(res)
-    # ch_list = get_word_ch_list(st)
+    st = '无边落木萧萧下，不尽长江滚滚来'
+    st2='北京大学生活动中心'
+    st3='南京市长江大桥'
+    seq_list=[st,st2,st3]
+    for s in seq_list:
+        res = viterbi(s)
+        print('hmm:'+str(res))
+        print('jieba:'+str([x for x in jieba.cut(s,cut_all=False)]))
+    # ch_list = get_word_ch_list(st3)
     # slist = get_status_list_by_chlist(ch_list)
     # print(ch_list)
     # print(slist)
+

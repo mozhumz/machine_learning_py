@@ -105,7 +105,6 @@ print(type(v1))
 # print(np.linalg.norm(v1))
 # print(np.linalg.norm(v2))
 import jieba
-from common import file_util
 # pre='G:\\bigdata\\badou\\00-data\\data\\'
 # out_dir=pre+'out\\'
 # std_dir='std\\'
@@ -133,7 +132,8 @@ from common import file_util
 
 s='民航部门又出排堵保畅新招月日起京沪穗三地四大机场航班统一放行将正式运行意味着在这几条航线上延误未定的情况将有所减少民航部门可提供一个相对合理的预计起飞时刻'
 
-jieba.add_word('现用')
+# jieba.add_word('现用')
+
 cut_s=[i for i in jieba.cut(s,HMM=True)]
 print(cut_s)
 print('-----------------')
@@ -147,7 +147,7 @@ print('-----------------')
 # print(s1.words)
 
 # tokenizer = hanlp.load('LARGE_ALBERT_BASE')
-from common import common_util
+# from common import common_util
 # pre='G:\\bigdata\\badou\\00-data\\word2vec\\test\\1business.seg.cln_out2.txt'
 # lines=file_util.read_file(pre)
 # for line in lines:
