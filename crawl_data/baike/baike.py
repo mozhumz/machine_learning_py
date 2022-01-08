@@ -1,12 +1,16 @@
 import htmlUtil
-import re
 from lxml import etree
 
-def soup_parse(res,html):
-    soup=htmlUtil.parseHtml(html)
+
+def soup_parse(html):
+    res = {}
+    soup = htmlUtil.parseHtml(html)
+    # 简介
     brief_intro = soup.find('div', attrs={'class': 'lemma-summary'})
     if brief_intro:
-        res['brief_intro'] = brief_intro
+        res['brief_intro'] = trim(brief_intro.text)
+
+    # 名片属性
     card = soup.find('div', attrs={'class': 'basic-info J-basic-info cmn-clearfix'})
     card_dict = {}
     card_lr = card.findChildren(recursive=False)
@@ -27,8 +31,76 @@ def soup_parse(res,html):
     if card_dict:
         res['card'] = card_dict
 
-def trim(text:str):
-    return text.replace('\n',' ').replace('\xa0','').replace('\u3000','')
+    # 解析目录
+    catalog_dict = dict()
+    catalog = soup.find('div', attrs={'class': 'catalog-list'})
+    catalog_ol_list = catalog.findChildren(recursive=False)
+    if catalog_ol_list:
+        pre_level = 0
+        pre_level1_key = ''
+        for ol in catalog_ol_list:
+            li_list = ol.findChildren(recursive=False)
+            if li_list:
+                for li in li_list:
+                    li_cls = li.attrs['class'][0]
+                    span_list = li.findChildren(recursive=False)
+                    if span_list:
+                        li_text = trim(span_list[-1].text)
+                        if 'level1'.__eq__(li_cls):
+                            pre_level1_key = li_text
+                            catalog_dict[pre_level1_key] = []
+                        elif 'level2'.__eq__(li_cls):
+                            v_list = catalog_dict.get(pre_level1_key)
+                            v_list.append(li_text)
+
+    print(catalog_dict)
+    if catalog_dict:
+        res['catalog_dict'] = catalog_dict
+
+    # 解析目录对应的内容
+    content_dict = dict()
+    cata_content = soup.find('div', attrs={'class': 'main-content J-content'})
+    if cata_content:
+        div_content_list = cata_content.findChildren(recursive=False)
+        pre_key = ''
+        if div_content_list:
+            for div_content in div_content_list:
+                div_class = get_one_html_class(div_content)
+
+                if div_class:
+
+                    # 标题
+                    if 'para-title'.__eq__(div_class):
+                        try:
+                            title = div_content.select('.title-text')
+                            pre_key = title[-1].contents[-1]
+                        except Exception as e:
+                            print(e)
+                            pre_key = None
+
+                    # 内容
+                    if 'para'.__eq__(div_class):
+                        content_dict[pre_key] = trim(div_content.text)
+
+    print(content_dict)
+    if content_dict:
+        res['content_dict'] = content_dict
+
+    return res
+
+
+def get_one_html_class(html):
+    if html:
+        cls = html.attrs.get('class')
+        if cls:
+            return cls[0]
+        return None
+    return None
+
+
+def trim(text: str):
+    return text.replace('\n', ' ').replace('\xa0', '').replace('\u3000', '')
+
 
 def lxml_parse():
     global html
@@ -41,11 +113,25 @@ def lxml_parse():
     print(card)
 
 
+def parse_baike(req_url):
+    try:
+        html = htmlUtil.getReq(url=req_url)
+        return soup_parse(html)
+    except Exception as e:
+        print(e)
+        html = htmlUtil.getReq(url=req_url)
+        return soup_parse(html)
+
+
+def parse_keyword(keyword):
+    keyword = htmlUtil.encodeurl(keyword)
+    req_url = 'http://baike.baidu.com/item/%s' % keyword
+    return parse_baike(req_url)
+
+
 if __name__ == '__main__':
-    req_url='https://baike.baidu.com/item/%E5%8D%8E%E4%B8%BA%E6%8A%80%E6%9C%AF%E6%9C%89%E9%99%90%E5%85%AC%E5%8F%B8'
-    html=htmlUtil.getReq(url=req_url)
-    res={}
-    soup_parse(res,html)
+    keyword = 'java'
+    print('res:%s' % parse_keyword(keyword))
     # lxml_parse()
     # import re
     #
