@@ -10,7 +10,7 @@ from transformers import BertModel
 
 '''
 
-bert = BertModel.from_pretrained(r"D:\badou\pretrain_model\chinese_bert_likes\bert-base-chinese", return_dict=False)
+bert = BertModel.from_pretrained(r"G:\bigdata\badou\nlp\bert\bert-base-chinese", return_dict=False)
 state_dict = bert.state_dict()
 bert.eval()
 x = np.array([2450, 15486, 15167, 2110]) #通过vocab对应输入：深度学习
