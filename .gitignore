@@ -7,3 +7,6 @@ events.out.*
 *.ipynb
 .ipynb_checkpoints
 *.log
+*.h5
+*.pub
+*.csv
