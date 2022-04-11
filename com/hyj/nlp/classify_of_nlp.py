@@ -36,9 +36,9 @@ test_data = pd.read_csv(DATA_ROOT + 'test.tsv.zip', sep='\t')
 
 NUM_SAMPLES = train_data.shape[0]
 train_data = train_data.head(NUM_SAMPLES)
-labels=train_data['Sentiment']
+labels = train_data['Sentiment']
 # X_train, X_test, y_train, y_test=train_test_split(train_data,labels,random_state=2022,test_size=0.2)
-X_train, X_test, y_train=train_data,test_data,labels
+X_train, X_test, y_train = train_data, test_data, labels
 print(X_train.shape, X_test.shape)
 train_data.head()
 
@@ -76,21 +76,36 @@ train_data_features = vectorizer.fit_transform(X_train['Phrase'])
 print(train_data_features.A)
 print(vectorizer.get_feature_names())
 print(train_data_features.shape)
-# multinomial表示使用softmax ovr表示将某类看作正样本 其余为负样本进行二分类，训练m个分类器
-log_rot=LogisticRegression(multi_class='multinomial', solver='newton-cg')
-log_rot.fit(train_data_features,y_train)
+'''
+1 逻辑回归进行多分类
+multinomial表示使用softmax，ovr表示将某类看作正样本 其余为负样本进行二分类，训练m个分类器
+'''
+log_rot = LogisticRegression(multi_class='multinomial', solver='newton-cg')
+log_rot.fit(train_data_features, y_train)
 print('w:%s, b:%s' % (log_rot.coef_, log_rot.intercept_))
-#Pre-processing Test Data
-test_data_features=vectorizer.transform(X_test['Phrase'])
-test_data_features=test_data_features.toarray()
+# Pre-processing Test Data
+test_data_features = vectorizer.transform(X_test['Phrase'])
+test_data_features = test_data_features.toarray()
 
-results=log_rot.predict(test_data_features)
-print(results)
 
-# y_test=np.array(y_test)
-# print(log_rot.score(test_data_features,y_test))
+def predict(model, y_test, logPre):
+    results = model.predict(y_test)
+    print(results)
+    # y_test=np.array(y_test)
+    # print(log_rot.score(test_data_features,y_test))
+    # Saving submissions
+    output_file = pd.DataFrame(data={'PhraseId': test_data['PhraseId'], 'Sentiment': results})
+    output_file.to_csv(logPre + '-mozhu.csv', index=False)
+    print('The submission file has been saved successfully')
+    return
 
-#Saving submissions
-output_file=pd.DataFrame(data={'PhraseId':test_data['PhraseId'],'Sentiment':results})
-output_file.to_csv('mozhu-lr.csv',index=False)
-print('The submission file has been saved successfully')
+
+# predict(log_rot,'lr')
+
+from sklearn.ensemble import RandomForestClassifier
+
+forest = RandomForestClassifier(n_estimators=50,n_jobs=4)
+forest.fit(train_data_features, train_data['Sentiment'])
+predict(forest, test_data_features, 'forest')
+
+
